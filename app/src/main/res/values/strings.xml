@@ -1,3 +1,5 @@
 <resources>
     <string name="app_name">Au risque de vous plaire</string>
+    <string name="creation">creation</string>
+    <string name="message">message</string>
 </resources>
