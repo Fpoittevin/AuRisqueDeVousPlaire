@@ -4,4 +4,12 @@
     <string name="message">message</string>
     <string name="cards">cartes</string>
     <string name="stamps">tampons</string>
+
+    <string name="firstName">Prénom</string>
+    <string name="lastName">Nom</string>
+    <string name="emailAddress">Adresse email</string>
+    <string name="phoneNumber">Numéro de téléphone</string>
+    <string name="day">Jour</string>
+    <string name="month">Mois</string>
+    <string name="comment">Commentaire</string>
 </resources>

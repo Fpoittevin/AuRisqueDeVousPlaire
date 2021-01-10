@@ -132,6 +132,7 @@
         <com.google.android.material.floatingactionbutton.FloatingActionButton
             android:src="@drawable/ic_baseline_edit_24"
             style="@style/FabStyle"
+            android:id="@+id/fragment_customer_details_modification_fab"
             app:layout_anchor="@id/fragment_details_linear_layout" />
 
     </androidx.coordinatorlayout.widget.CoordinatorLayout>

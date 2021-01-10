@@ -30,7 +30,6 @@ class CustomerRepository {
                 }
 
                 override fun onFailure(call: Call<Customer>, t: Throwable) {
-                    Log.e("call", call.toString())
                     Log.e("error", t.message!!)
                 }
 
@@ -63,6 +62,62 @@ class CustomerRepository {
 
             })
         return customersListLiveData
+    }
+
+    fun updateCustomer(customer: Customer): MutableLiveData<Customer> {
+
+        val customerLiveData = MutableLiveData<Customer>()
+
+        CustomerService
+            .retrofit
+            .create(
+                CustomerService::class.java
+            ).updateCustomer(customer)
+            .enqueue(object : Callback<Customer> {
+                override fun onResponse(
+                    call: Call<Customer>,
+                    response: Response<Customer>
+                ) {
+                    response.body()?.let { customer ->
+                        customerLiveData.value = customer
+                    }
+                }
+
+                override fun onFailure(call: Call<Customer>, t: Throwable) {
+                    Log.e("call", call.toString())
+                    Log.e("error", t.message!!)
+                }
+
+            })
+        return customerLiveData
+    }
+
+    fun insertCustomer(customer: Customer): MutableLiveData<Customer> {
+
+        val customerLiveData = MutableLiveData<Customer>()
+
+        CustomerService
+            .retrofit
+            .create(
+                CustomerService::class.java
+            ).insertCustomer(customer)
+            .enqueue(object : Callback<Customer> {
+                override fun onResponse(
+                    call: Call<Customer>,
+                    response: Response<Customer>
+                ) {
+                    response.body()?.let { customer ->
+                        customerLiveData.value = customer
+                    }
+                }
+
+                override fun onFailure(call: Call<Customer>, t: Throwable) {
+                    Log.e("call", call.toString())
+                    Log.e("error", t.message!!)
+                }
+
+            })
+        return customerLiveData
     }
 
     fun addStamp(id: Int): MutableLiveData<Customer> {

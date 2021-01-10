@@ -26,8 +26,10 @@ class CustomersAdapter(private val customerItemClickCallback: CustomerItemClickC
         val customer = customersList[position]
         holder.bind(customer)
 
-        holder.itemView.setOnClickListener {
-            customerItemClickCallback.onCustomerItemClick(customer.id)
+        customer.id?.let { id ->
+            holder.itemView.setOnClickListener {
+                customerItemClickCallback.onCustomerItemClick(id)
+            }
         }
     }
 

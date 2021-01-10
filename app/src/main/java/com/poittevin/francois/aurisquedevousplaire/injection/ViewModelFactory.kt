@@ -4,6 +4,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import com.poittevin.francois.aurisquedevousplaire.repositories.CustomerRepository
 import com.poittevin.francois.aurisquedevousplaire.ui.customerDetails.CustomerDetailsViewModel
+import com.poittevin.francois.aurisquedevousplaire.ui.customerForm.CustomerFormViewModel
 import com.poittevin.francois.aurisquedevousplaire.ui.customersList.CustomersListViewModel
 
 class ViewModelFactory(private val customerRepository: CustomerRepository) :
@@ -17,6 +18,9 @@ class ViewModelFactory(private val customerRepository: CustomerRepository) :
             }
             modelClass.isAssignableFrom(CustomerDetailsViewModel::class.java) -> {
                 CustomerDetailsViewModel(customerRepository) as T
+            }
+            modelClass.isAssignableFrom(CustomerFormViewModel::class.java) -> {
+                CustomerFormViewModel(customerRepository) as T
             }
             else -> throw IllegalArgumentException("Unknown ViewModel class")
         }

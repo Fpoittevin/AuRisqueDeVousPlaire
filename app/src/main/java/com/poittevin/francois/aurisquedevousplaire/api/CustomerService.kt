@@ -4,7 +4,9 @@ import com.poittevin.francois.aurisquedevousplaire.models.Customer
 import retrofit2.Call
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
+import retrofit2.http.Body
 import retrofit2.http.GET
+import retrofit2.http.POST
 import retrofit2.http.Path
 
 interface CustomerService {
@@ -27,4 +29,10 @@ interface CustomerService {
 
     @GET("customer/addStamp/{id}")
     fun addStamp(@Path("id") id: Int): Call<Customer>
+
+    @POST("customer/update")
+    fun updateCustomer(@Body customer: Customer): Call<Customer>
+
+    @POST("customer/insert")
+    fun insertCustomer(@Body customer: Customer): Call<Customer>
 }

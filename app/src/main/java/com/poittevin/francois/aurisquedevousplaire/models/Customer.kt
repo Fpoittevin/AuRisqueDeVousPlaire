@@ -1,15 +1,28 @@
 package com.poittevin.francois.aurisquedevousplaire.models
 
+import com.google.gson.annotations.SerializedName
+
 data class Customer(
-    var id: Int,
-    var firstName: String,
-    var lastName: String,
-    var birthdayDay: Int,
-    var birthdayMonth: Int,
-    var phoneNumber: String,
-    var emailAddress: String,
-    var stampsNumber: Int,
-    var cardsNumber: Int,
-    var haveReduction: Int,
-    var comment: String
+    @SerializedName("id")
+    var id: Int? = null,
+    @SerializedName("firstName")
+    var firstName: String? = null,
+    @SerializedName("lastName")
+    var lastName: String? = null,
+    @SerializedName("birthdayDay")
+    var birthdayDay: Int? = null,
+    @SerializedName("birthdayMonth")
+    var birthdayMonth: Int? = null,
+    @SerializedName("phoneNumber")
+    var phoneNumber: String? = null,
+    @SerializedName("emailAddress")
+    var emailAddress: String? = null,
+    @SerializedName("stampsNumber")
+    var stampsNumber: Int? = 0,
+    @SerializedName("cardsNumber")
+    var cardsNumber: Int? = 1,
+    @SerializedName("haveReduction")
+    var haveReduction: Int? = 0,
+    @SerializedName("comment")
+    var comment: String? = null
 )

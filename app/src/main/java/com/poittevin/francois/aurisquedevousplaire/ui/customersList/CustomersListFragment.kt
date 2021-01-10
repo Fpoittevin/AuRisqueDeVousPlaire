@@ -1,11 +1,11 @@
 package com.poittevin.francois.aurisquedevousplaire.ui.customersList
 
 import android.os.Bundle
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.databinding.DataBindingUtil
+import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.poittevin.francois.aurisquedevousplaire.R
@@ -18,6 +18,7 @@ class CustomersListFragment : Fragment() {
     private val customersListViewModel: CustomersListViewModel by activityViewModels {
         Injection.provideViewModelFactory()
     }
+    lateinit var customersAdapter: CustomersAdapter
 
     companion object {
         @JvmStatic
@@ -28,18 +29,24 @@ class CustomersListFragment : Fragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        binding = DataBindingUtil.inflate(inflater, R.layout.fragment_customers_list, container, false)
+        binding =
+            DataBindingUtil.inflate(inflater, R.layout.fragment_customers_list, container, false)
         configureRecyclerView()
 
         return binding.root
     }
 
     private fun configureRecyclerView() {
-        val customersAdapter = CustomersAdapter(requireActivity() as CustomersAdapter.CustomerItemClickCallback)
+        customersAdapter =
+            CustomersAdapter(requireActivity() as CustomersAdapter.CustomerItemClickCallback)
         binding.fragmentCustomersListRecyclerView.apply {
             layoutManager = LinearLayoutManager(requireContext())
             adapter = customersAdapter
         }
+        updateCustomersList()
+    }
+
+    fun updateCustomersList() {
         customersListViewModel.getCustomersList().observe(viewLifecycleOwner, {
             customersAdapter.updateCustomersList(it)
         })

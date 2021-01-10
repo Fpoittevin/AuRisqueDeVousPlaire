@@ -17,10 +17,13 @@ class CustomerDetailsViewModel(private val customerRepository: CustomerRepositor
 
     fun addStamp() {
         customer.value?.let {
+            it.id?.let { id ->
                 customer.addSource(
-                    customerRepository.addStamp(it.id)) { newCustomer ->
+                    customerRepository.addStamp(id)
+                ) { newCustomer ->
                     customer.value = newCustomer
                 }
+            }
         }
     }
 }
