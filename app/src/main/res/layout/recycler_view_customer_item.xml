@@ -1,4 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
+
+
 <layout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
@@ -13,62 +15,65 @@
         android:layout_height="wrap_content"
         android:layout_margin="@dimen/default_margin">
 
-        <LinearLayout
+        <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_gravity="center_vertical"
-            android:orientation="vertical">
+            android:layout_gravity="center_vertical">
 
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="horizontal">
+                android:orientation="horizontal"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent">
 
                 <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_margin="@dimen/default_margin"
-                    android:text="@{customer.firstName}" />
-
-                <TextView
+                    style="@style/Title6Style"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_margin="@dimen/default_margin"
                     android:text="@{customer.lastName}" />
 
-                <ImageView
+                <TextView
+                    style="@style/Title6Style"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:gravity="end"
-                    android:src="@drawable/ic_baseline_email_24" />
-
-                <ImageView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:gravity="end"
-                    android:src="@drawable/ic_baseline_phone_24" />
+                    android:layout_margin="@dimen/default_margin"
+                    android:text="@{customer.firstName}" />
 
             </LinearLayout>
 
-            <TextView
-                android:id="@+id/fragment_detail_email_address_text_view"
+            <LinearLayout
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_margin="@dimen/default_margin"
-                android:drawablePadding="@dimen/default_margin"
-                android:text="@{customer.emailAddress}"
-                app:drawableStartCompat="@drawable/ic_baseline_email_24" />
+                android:orientation="horizontal"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="parent">
 
-            <TextView
-                android:id="@+id/fragment_detail_phone_number_text_view"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_margin="@dimen/default_margin"
-                android:drawablePadding="@dimen/default_margin"
-                android:text="@{customer.phoneNumber}"
-                app:drawableStartCompat="@drawable/ic_baseline_phone_24" />
+                <ImageView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="@dimen/default_margin"
+                    android:gravity="end"
+                    android:src="@drawable/ic_baseline_cake_24"
+                    app:birthdayDay="@{customer.birthdayDay}"
+                    app:birthdayMonth="@{customer.birthdayMonth}"
+                    android:contentDescription="@string/birthday_icon" />
 
-        </LinearLayout>
+                <ImageView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="@dimen/default_margin"
+                    android:gravity="end"
+                    android:src="@drawable/ic_baseline_promotion_24"
+                    app:haveReduction="@{customer.haveReduction}"
+                    android:contentDescription="@string/promotion_icon" />
+
+            </LinearLayout>
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
 
     </com.google.android.material.card.MaterialCardView>
 </layout>

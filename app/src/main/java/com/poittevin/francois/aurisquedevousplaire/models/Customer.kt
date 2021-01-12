@@ -22,7 +22,7 @@ data class Customer(
     @SerializedName("cardsNumber")
     var cardsNumber: Int? = 1,
     @SerializedName("haveReduction")
-    var haveReduction: Int? = 0,
+    var haveReduction: Boolean = false,
     @SerializedName("comment")
     var comment: String? = null
 )

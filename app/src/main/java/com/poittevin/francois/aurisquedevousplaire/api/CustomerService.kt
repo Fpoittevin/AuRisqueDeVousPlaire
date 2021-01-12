@@ -35,4 +35,7 @@ interface CustomerService {
 
     @POST("customer/insert")
     fun insertCustomer(@Body customer: Customer): Call<Customer>
+
+    @POST("customer/search")
+    fun searchCustomers(@Body searchString: Map<String, String>): Call<List<Customer>>
 }

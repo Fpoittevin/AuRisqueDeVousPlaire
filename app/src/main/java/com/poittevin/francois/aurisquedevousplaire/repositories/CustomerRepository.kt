@@ -37,30 +37,41 @@ class CustomerRepository {
         return customerLiveData
     }
 
-    fun getCustomersList(): MutableLiveData<List<Customer>> {
+    fun getCustomersList(search: String?): MutableLiveData<List<Customer>> {
 
         val customersListLiveData = MutableLiveData<List<Customer>>()
-
-        CustomerService
+        val customerService = CustomerService
             .retrofit
             .create(
                 CustomerService::class.java
-            ).getCustomersList()
-            .enqueue(object : Callback<List<Customer>> {
-                override fun onResponse(
-                    call: Call<List<Customer>>,
-                    response: Response<List<Customer>>
-                ) {
-                    response.body()?.let { customersList ->
-                        customersListLiveData.value = customersList
-                    }
-                }
+            )
 
-                override fun onFailure(call: Call<List<Customer>>, t: Throwable) {
-                    Log.e("error", t.message!!)
+        val callback = object :  Callback<List<Customer>> {
+            override fun onResponse(
+                call: Call<List<Customer>>,
+                response: Response<List<Customer>>
+            ) {
+                response.body()?.let { customersList ->
+                    customersListLiveData.value = customersList
                 }
+            }
 
-            })
+            override fun onFailure(call: Call<List<Customer>>, t: Throwable) {
+                Log.e("error", t.message!!)
+            }
+        }
+
+        search?.let {
+            customerService
+                .searchCustomers(mapOf("searchString" to it))
+                .enqueue(callback)
+
+        } ?: run {
+            customerService
+                .getCustomersList()
+                .enqueue(callback)
+        }
+
         return customersListLiveData
     }
 

@@ -1,9 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <layout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
-    xmlns:app="http://schemas.android.com/apk/res-auto">
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
 
     <data>
+
+        <import type="android.view.View" />
+
         <variable
             name="viewModel"
             type="com.poittevin.francois.aurisquedevousplaire.ui.customerDetails.CustomerDetailsViewModel" />
@@ -14,8 +17,13 @@
         android:layout_height="match_parent"
         tools:context=".ui.customerDetails.CustomerDetailsFragment">
 
+        <com.google.android.material.card.MaterialCardView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_margin="@dimen/default_margin"
+            android:id="@+id/fragment_details_card_view">
+
         <LinearLayout
-            android:id="@+id/fragment_details_linear_layout"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:orientation="vertical">
@@ -30,66 +38,65 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_margin="@dimen/default_margin"
+                    style="@style/Title6Style"
                     android:text="@{viewModel.customer.firstName}" />
 
                 <TextView
                     android:id="@+id/fragment_detail_last_name_text_view"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    style="@style/Title6Style"
                     android:layout_margin="@dimen/default_margin"
                     android:text="@{viewModel.customer.lastName}" />
 
             </LinearLayout>
 
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal">
-
                 <TextView
                     android:id="@+id/fragment_detail_email_address_text_view"
-                    android:layout_width="0dp"
+                    android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_margin="@dimen/default_margin"
-                    android:layout_weight="50"
-                    android:text="@{viewModel.customer.emailAddress}"
                     android:drawablePadding="@dimen/default_margin"
+                    android:text="@{viewModel.customer.emailAddress}"
                     app:drawableStartCompat="@drawable/ic_baseline_email_24" />
 
                 <TextView
                     android:id="@+id/fragment_detail_phone_number_text_view"
-                    android:layout_width="0dp"
+                    android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_margin="@dimen/default_margin"
-                    android:layout_weight="50"
-                    android:text="@{viewModel.customer.phoneNumber}"
                     android:drawablePadding="@dimen/default_margin"
+                    android:text="@{viewModel.customer.phoneNumber}"
                     app:drawableStartCompat="@drawable/ic_baseline_phone_24" />
 
-            </LinearLayout>
+            <View style="@style/divider" />
+
 
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                android:baselineAligned="false">
+                android:baselineAligned="false"
+                android:orientation="horizontal">
 
                 <LinearLayout
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:layout_weight="50"
-                    android:orientation="vertical"
                     android:layout_margin="@dimen/default_big_margin"
-                    android:gravity="center">
+                    android:layout_weight="50"
+                    android:gravity="center"
+                    android:orientation="vertical">
 
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
+                        style="@style/Title6Style"
+                        android:gravity="clip_horizontal"
                         android:text="@{String.valueOf(viewModel.customer.cardsNumber)}" />
 
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
+                        android:gravity="clip_horizontal"
                         android:text="@string/cards" />
 
                 </LinearLayout>
@@ -97,30 +104,49 @@
                 <LinearLayout
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
+                    android:layout_margin="@dimen/default_big_margin"
                     android:layout_weight="50"
                     android:gravity="center"
-                    android:layout_margin="@dimen/default_big_margin"
                     android:orientation="vertical">
 
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
+                        android:gravity="clip_horizontal"
+                        style="@style/Title6Style"
                         android:text="@{String.valueOf(viewModel.customer.stampsNumber)}" />
 
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
+                        android:gravity="clip_horizontal"
                         android:text="@string/stamps" />
 
                     <com.google.android.material.button.MaterialButton
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
+                        android:gravity="clip_horizontal"
+                        android:layout_margin="@dimen/default_margin"
                         android:onClick="@{() -> viewModel.addStamp()}"
+                        android:text="@string/stamps"
                         app:icon="@drawable/ic_baseline_plus_one_24" />
 
                 </LinearLayout>
 
             </LinearLayout>
+
+            <View style="@style/divider" />
+
+            <com.google.android.material.button.MaterialButton
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_margin="@dimen/default_margin"
+                android:layout_gravity="center_horizontal"
+                android:enabled="@{viewModel.customer.haveReduction}"
+                android:text="@string/useReduction"
+                app:icon="@drawable/ic_baseline_promotion_24" />
+
+            <View style="@style/divider" />
 
             <TextView
                 android:layout_width="match_parent"
@@ -129,11 +155,13 @@
                 android:text="@{viewModel.customer.comment}" />
         </LinearLayout>
 
+        </com.google.android.material.card.MaterialCardView>
+
         <com.google.android.material.floatingactionbutton.FloatingActionButton
-            android:src="@drawable/ic_baseline_edit_24"
-            style="@style/FabStyle"
             android:id="@+id/fragment_customer_details_modification_fab"
-            app:layout_anchor="@id/fragment_details_linear_layout" />
+            style="@style/FabStyle"
+            android:src="@drawable/ic_baseline_edit_24"
+            app:layout_anchor="@id/fragment_details_card_view" />
 
     </androidx.coordinatorlayout.widget.CoordinatorLayout>
 </layout>

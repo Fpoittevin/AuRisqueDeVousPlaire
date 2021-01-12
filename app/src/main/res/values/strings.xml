@@ -12,4 +12,8 @@
     <string name="day">Jour</string>
     <string name="month">Mois</string>
     <string name="comment">Commentaire</string>
+    <string name="useReduction">utiliser la réduction</string>
+
+    <string name="birthday_icon">birthday icon</string>
+    <string name="promotion_icon">promotion icon</string>
 </resources>

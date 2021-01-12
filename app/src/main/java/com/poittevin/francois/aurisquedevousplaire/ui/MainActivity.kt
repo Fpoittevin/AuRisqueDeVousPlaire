@@ -6,34 +6,47 @@ import android.view.Menu
 import android.view.MenuItem
 import android.view.View
 import android.view.inputmethod.InputMethodManager
+import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
+import androidx.appcompat.widget.SearchView
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import com.poittevin.francois.aurisquedevousplaire.R
 import com.poittevin.francois.aurisquedevousplaire.databinding.ActivityMainBinding
+import com.poittevin.francois.aurisquedevousplaire.injection.Injection
 import com.poittevin.francois.aurisquedevousplaire.ui.customerDetails.CustomerDetailsFragment
 import com.poittevin.francois.aurisquedevousplaire.ui.customerForm.CustomerFormFragment
 import com.poittevin.francois.aurisquedevousplaire.ui.customersList.CustomersAdapter
 import com.poittevin.francois.aurisquedevousplaire.ui.customersList.CustomersListFragment
+import com.poittevin.francois.aurisquedevousplaire.ui.customersList.CustomersListViewModel
 
 class MainActivity : AppCompatActivity(),
     CustomersAdapter.CustomerItemClickCallback,
     CustomerDetailsFragment.CustomerModificationFabListener,
-    CustomerFormFragment.CustomerSaveListener {
+    CustomerFormFragment.CustomerSaveListener,
+    SearchView.OnQueryTextListener {
 
     private lateinit var binding: ActivityMainBinding
     private val customerListFragment = CustomersListFragment.newInstance()
+    private val customersListViewModel: CustomersListViewModel by viewModels {
+        Injection.provideViewModelFactory()
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = DataBindingUtil.setContentView(this, R.layout.activity_main)
         configureToolbar()
+        configureSearchView()
 
         displayFragment(R.id.activity_main_first_frame_layout, customerListFragment)
     }
 
     private fun configureToolbar() {
         setSupportActionBar(binding.activityMainToolbar)
+    }
+
+    private fun configureSearchView() {
+        binding.activityMainSearchView.setOnQueryTextListener(this)
     }
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
@@ -85,5 +98,14 @@ class MainActivity : AppCompatActivity(),
         val view = currentFocus ?: View(this)
         val imm = getSystemService(Activity.INPUT_METHOD_SERVICE) as InputMethodManager
         imm.hideSoftInputFromWindow(view.windowToken, 0)
+    }
+
+    override fun onQueryTextSubmit(query: String?): Boolean {
+        return true
+    }
+
+    override fun onQueryTextChange(newText: String?): Boolean {
+        customersListViewModel.searchLiveData.value = newText
+        return true
     }
 }
