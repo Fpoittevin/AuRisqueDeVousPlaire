@@ -6,6 +6,8 @@ import com.poittevin.francois.aurisquedevousplaire.repositories.CustomerReposito
 import com.poittevin.francois.aurisquedevousplaire.ui.customerDetails.CustomerDetailsViewModel
 import com.poittevin.francois.aurisquedevousplaire.ui.customerForm.CustomerFormViewModel
 import com.poittevin.francois.aurisquedevousplaire.ui.customersList.CustomersListViewModel
+import com.poittevin.francois.aurisquedevousplaire.ui.message.MessageViewModel
+import com.poittevin.francois.aurisquedevousplaire.ui.reductionDialog.ReductionViewModel
 
 class ViewModelFactory(private val customerRepository: CustomerRepository) :
     ViewModelProvider.Factory {
@@ -21,6 +23,12 @@ class ViewModelFactory(private val customerRepository: CustomerRepository) :
             }
             modelClass.isAssignableFrom(CustomerFormViewModel::class.java) -> {
                 CustomerFormViewModel(customerRepository) as T
+            }
+            modelClass.isAssignableFrom(MessageViewModel::class.java) -> {
+                MessageViewModel(customerRepository) as T
+            }
+            modelClass.isAssignableFrom(ReductionViewModel::class.java) -> {
+                ReductionViewModel() as T
             }
             else -> throw IllegalArgumentException("Unknown ViewModel class")
         }

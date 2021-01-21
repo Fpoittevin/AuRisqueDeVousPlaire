@@ -13,7 +13,7 @@ interface CustomerService {
 
     companion object {
 
-        private const val BASE_URL = "http://192.168.1.27:8888/ardvp/api/app/"
+        private const val BASE_URL = "http://192.168.1.26:8888/ardvp/api/app/"
 
         val retrofit: Retrofit = Retrofit.Builder()
             .baseUrl(BASE_URL)
@@ -30,6 +30,9 @@ interface CustomerService {
     @GET("customer/addStamp/{id}")
     fun addStamp(@Path("id") id: Int): Call<Customer>
 
+    @GET("customer/useReduction/{id}")
+    fun useReduction(@Path("id") id: Int): Call<Customer>
+
     @POST("customer/update")
     fun updateCustomer(@Body customer: Customer): Call<Customer>
 
@@ -38,4 +41,10 @@ interface CustomerService {
 
     @POST("customer/search")
     fun searchCustomers(@Body searchString: Map<String, String>): Call<List<Customer>>
+
+    @GET("customer/getMinMaxNumberOfCards")
+    fun getMinMaxNumberOfCards(): Call<Array<Int>>
+
+    @POST("customer/numberOfCustomersInRangeCardsNumber")
+    fun getNumberOfCustomersInRangeCardsNumber(@Body minMax: Map<String, Int>): Call<Int>
 }

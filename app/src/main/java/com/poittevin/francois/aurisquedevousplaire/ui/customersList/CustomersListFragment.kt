@@ -7,6 +7,7 @@ import android.view.ViewGroup
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
+import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.poittevin.francois.aurisquedevousplaire.R
 import com.poittevin.francois.aurisquedevousplaire.databinding.FragmentCustomersListBinding
@@ -38,10 +39,12 @@ class CustomersListFragment : Fragment() {
 
     private fun configureRecyclerView() {
         customersAdapter =
-            CustomersAdapter(requireActivity() as CustomersAdapter.CustomerItemClickCallback)
+            CustomersAdapter(requireContext(), requireActivity() as CustomersAdapter.CustomerItemClickCallback)
+        val linearLayoutManager = LinearLayoutManager(requireContext())
         binding.fragmentCustomersListRecyclerView.apply {
-            layoutManager = LinearLayoutManager(requireContext())
+            layoutManager = linearLayoutManager
             adapter = customersAdapter
+            //addItemDecoration(DividerItemDecoration(this.context, linearLayoutManager.orientation))
         }
         updateCustomersList()
     }

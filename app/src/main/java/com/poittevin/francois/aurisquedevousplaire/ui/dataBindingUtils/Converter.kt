@@ -1,6 +1,7 @@
 package com.poittevin.francois.aurisquedevousplaire.ui.dataBindingUtils
 
 import androidx.databinding.InverseMethod
+import com.poittevin.francois.aurisquedevousplaire.utils.Utils
 
 object Converter {
     @InverseMethod("intToStringDate")
@@ -16,11 +17,7 @@ object Converter {
     @JvmStatic
     fun intToStringDate(value: Int?): String {
         value?.let {
-            return if(value < 10) {
-                "0$value"
-            } else {
-                value.toString()
-            }
+            return Utils.formatIntToStringWithZero(it)
         } ?: run {
             return ""
         }

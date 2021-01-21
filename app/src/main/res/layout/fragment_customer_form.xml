@@ -17,6 +17,11 @@
         android:layout_height="match_parent"
         tools:context=".ui.customerForm.CustomerFormFragment">
 
+        <com.google.android.material.card.MaterialCardView
+            android:layout_width="match_parent"
+            android:layout_margin="@dimen/default_margin"
+            android:layout_height="wrap_content">
+
         <ScrollView
             android:id="@+id/fragment_customer_form_scroll_view"
             android:layout_width="match_parent"
@@ -116,9 +121,9 @@
                     <com.google.android.material.textfield.TextInputLayout
                         style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
                         android:layout_width="0dp"
-                        android:layout_weight="50"
                         android:layout_height="wrap_content"
-                        android:layout_margin="@dimen/default_margin">
+                        android:layout_margin="@dimen/default_margin"
+                        android:layout_weight="50">
 
                         <com.google.android.material.textfield.TextInputEditText
                             android:layout_width="match_parent"
@@ -132,15 +137,15 @@
                     <com.google.android.material.textfield.TextInputLayout
                         style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
                         android:layout_width="0dp"
-                        android:layout_weight="50"
                         android:layout_height="wrap_content"
                         android:layout_margin="@dimen/default_margin"
-                        android:hint="@string/month"
-                        android:inputType="number">
+                        android:layout_weight="50"
+                        android:hint="@string/month">
 
                         <com.google.android.material.textfield.TextInputEditText
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
+                            android:inputType="number"
                             android:text="@={Converter.intToStringDate(viewModel.customer.birthdayMonth)}" />
 
                     </com.google.android.material.textfield.TextInputLayout>
@@ -165,6 +170,8 @@
             </LinearLayout>
 
         </ScrollView>
+
+        </com.google.android.material.card.MaterialCardView>
 
         <com.google.android.material.floatingactionbutton.FloatingActionButton
             android:id="@+id/fragment_customer_details_modification_fab"

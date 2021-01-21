@@ -19,12 +19,15 @@ import com.poittevin.francois.aurisquedevousplaire.ui.customerForm.CustomerFormF
 import com.poittevin.francois.aurisquedevousplaire.ui.customersList.CustomersAdapter
 import com.poittevin.francois.aurisquedevousplaire.ui.customersList.CustomersListFragment
 import com.poittevin.francois.aurisquedevousplaire.ui.customersList.CustomersListViewModel
+import com.poittevin.francois.aurisquedevousplaire.ui.message.MessageDialogFragment
+import com.poittevin.francois.aurisquedevousplaire.ui.message.MessageViewModel
 
 class MainActivity : AppCompatActivity(),
     CustomersAdapter.CustomerItemClickCallback,
     CustomerDetailsFragment.CustomerModificationFabListener,
     CustomerFormFragment.CustomerSaveListener,
-    SearchView.OnQueryTextListener {
+    SearchView.OnQueryTextListener,
+    CustomerDetailsFragment.ReductionChangeListener {
 
     private lateinit var binding: ActivityMainBinding
     private val customerListFragment = CustomersListFragment.newInstance()
@@ -38,6 +41,10 @@ class MainActivity : AppCompatActivity(),
         configureToolbar()
         configureSearchView()
 
+        displayCustomerListFragment()
+    }
+
+    private fun displayCustomerListFragment() {
         displayFragment(R.id.activity_main_first_frame_layout, customerListFragment)
     }
 
@@ -60,8 +67,21 @@ class MainActivity : AppCompatActivity(),
                 R.id.activity_main_second_frame_layout,
                 CustomerFormFragment.newInstance(null, this)
             )
+            R.id.main_activity_toolbar_menu_message_button -> displayMessageDialogFragment()
         }
         return super.onOptionsItemSelected(item)
+    }
+
+    private fun displayMessageDialogFragment() {
+
+        val messageViewModel: MessageViewModel by viewModels {
+            Injection.provideViewModelFactory()
+        }
+
+        messageViewModel.fromToNumberOfCards.observe(this) {
+            val fragmentTransaction = supportFragmentManager.beginTransaction()
+            MessageDialogFragment.newInstance().show(fragmentTransaction, "message")
+        }
     }
 
     private fun displayFragment(layoutId: Int, fragment: Fragment) {
@@ -74,7 +94,7 @@ class MainActivity : AppCompatActivity(),
     override fun onCustomerItemClick(customerId: Int) {
         displayFragment(
             R.id.activity_main_second_frame_layout,
-            CustomerDetailsFragment.newInstance(customerId, this)
+            CustomerDetailsFragment.newInstance(customerId, this, this)
         )
     }
 
@@ -88,10 +108,10 @@ class MainActivity : AppCompatActivity(),
     override fun onCustomerSave(customerId: Int) {
         displayFragment(
             R.id.activity_main_second_frame_layout,
-            CustomerDetailsFragment.newInstance(customerId, this)
+            CustomerDetailsFragment.newInstance(customerId, this, this)
         )
+        customersListViewModel.listChange.value = true
         hideKeyboard()
-        customerListFragment.updateCustomersList()
     }
 
     private fun hideKeyboard() {
@@ -107,5 +127,9 @@ class MainActivity : AppCompatActivity(),
     override fun onQueryTextChange(newText: String?): Boolean {
         customersListViewModel.searchLiveData.value = newText
         return true
+    }
+
+    override fun onReductionChange() {
+        customersListViewModel.listChange.value = true
     }
 }

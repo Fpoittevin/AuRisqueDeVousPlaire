@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">Au risque de vous plaire</string>
+    <string name="app_name">Au Risque de Vous Plaire</string>
     <string name="creation">creation</string>
     <string name="message">message</string>
     <string name="cards">cartes</string>
@@ -12,8 +12,13 @@
     <string name="day">Jour</string>
     <string name="month">Mois</string>
     <string name="comment">Commentaire</string>
-    <string name="useReduction">utiliser la réduction</string>
+    <string name="useReduction">utiliser une réduction</string>
+    <string name="reductions">réductions</string>
+    <string name="reduction">réduction</string>
+    <string name="useTheReduction">utiliser la réduction</string>
 
     <string name="birthday_icon">birthday icon</string>
     <string name="promotion_icon">promotion icon</string>
+
+    <string name="send">envoyer</string>
 </resources>

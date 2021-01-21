@@ -19,4 +19,16 @@
         <item name="android:background">?android:attr/listDivider</item>
         <item name="android:layout_margin">@dimen/default_big_margin</item>
     </style>
+
+    <style name="titleToolbarStyle" parent="TextAppearance.MaterialComponents.Headline6">
+        <item name="fontFamily">@font/roboto_light</item>
+        <item name="android:textSize">30sp</item>
+    </style>
+
+    <style name="buttonStyle" parent="Widget.MaterialComponents.Button">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="cornerRadius">50dp</item>
+        <item name="android:layout_margin">@dimen/default_margin</item>
+    </style>
 </resources>

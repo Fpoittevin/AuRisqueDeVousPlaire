@@ -18,11 +18,11 @@ data class Customer(
     @SerializedName("emailAddress")
     var emailAddress: String? = null,
     @SerializedName("stampsNumber")
-    var stampsNumber: Int? = 0,
+    var stampsNumber: Int = 0,
     @SerializedName("cardsNumber")
-    var cardsNumber: Int? = 1,
-    @SerializedName("haveReduction")
-    var haveReduction: Boolean = false,
+    var cardsNumber: Int = 1,
+    @SerializedName("reductionNumber")
+    var reductionNumber: Int = 0,
     @SerializedName("comment")
     var comment: String? = null
 )

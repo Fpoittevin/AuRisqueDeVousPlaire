@@ -1,23 +1,28 @@
 <?xml version="1.0" encoding="utf-8"?>
 
-
 <layout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <data>
+
         <variable
             name="customer"
             type="com.poittevin.francois.aurisquedevousplaire.models.Customer" />
+
     </data>
 
     <com.google.android.material.card.MaterialCardView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_margin="@dimen/default_margin">
+        android:id="@+id/recycler_view_customer_item_card_view"
+        android:layout_margin="@dimen/default_margin"
+        android:background="@color/primaryDarkColor">
 
         <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/recycler_view_customer_item_constraint_layout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:padding="@dimen/default_big_margin"
             android:layout_gravity="center_vertical">
 
             <LinearLayout
@@ -28,19 +33,28 @@
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent">
 
-                <TextView
-                    style="@style/Title6Style"
+                <ImageView
                     android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
+                    app:tint="@color/black"
+                    android:layout_height="match_parent"
                     android:layout_margin="@dimen/default_margin"
-                    android:text="@{customer.lastName}" />
+                    android:src="@drawable/ic_baseline_person_outline_24" />
 
                 <TextView
                     style="@style/Title6Style"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_margin="@dimen/default_margin"
-                    android:text="@{customer.firstName}" />
+                    android:text="@{customer.lastName}"
+                    app:fontFamily="@font/roboto_light" />
+
+                <TextView
+                    style="@style/Title6Style"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="@dimen/default_margin"
+                    android:text="@{customer.firstName}"
+                    app:fontFamily="@font/roboto_light" />
 
             </LinearLayout>
 
@@ -56,24 +70,27 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_margin="@dimen/default_margin"
+                    android:contentDescription="@string/birthday_icon"
                     android:gravity="end"
                     android:src="@drawable/ic_baseline_cake_24"
+                    android:visibility="invisible"
                     app:birthdayDay="@{customer.birthdayDay}"
-                    app:birthdayMonth="@{customer.birthdayMonth}"
-                    android:contentDescription="@string/birthday_icon" />
+                    app:birthdayMonth="@{customer.birthdayMonth}" />
 
                 <ImageView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_margin="@dimen/default_margin"
+                    android:contentDescription="@string/promotion_icon"
+                    app:reductionNumber="@{customer.reductionNumber}"
                     android:gravity="end"
                     android:src="@drawable/ic_baseline_promotion_24"
-                    app:haveReduction="@{customer.haveReduction}"
-                    android:contentDescription="@string/promotion_icon" />
+                    android:visibility="invisible" />
 
             </LinearLayout>
 
         </androidx.constraintlayout.widget.ConstraintLayout>
 
     </com.google.android.material.card.MaterialCardView>
+
 </layout>

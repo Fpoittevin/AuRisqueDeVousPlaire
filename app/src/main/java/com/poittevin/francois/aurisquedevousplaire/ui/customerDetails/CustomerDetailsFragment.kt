@@ -11,12 +11,16 @@ import com.poittevin.francois.aurisquedevousplaire.R
 import com.poittevin.francois.aurisquedevousplaire.databinding.FragmentCustomerDetailsBinding
 import com.poittevin.francois.aurisquedevousplaire.injection.Injection
 import com.poittevin.francois.aurisquedevousplaire.models.Customer
+import com.poittevin.francois.aurisquedevousplaire.ui.message.MessageDialogFragment
+import com.poittevin.francois.aurisquedevousplaire.ui.reductionDialog.ReductionDialogFragment
 
-class CustomerDetailsFragment : Fragment() {
+class CustomerDetailsFragment : Fragment(), ReductionDialogFragment.ReductionButtonClickListener {
 
     private lateinit var binding: FragmentCustomerDetailsBinding
     private lateinit var customerModificationFabListener: CustomerModificationFabListener
+    private lateinit var reductionChangeListener: ReductionChangeListener
     private lateinit var customer: Customer
+    private val reductionDialogFragment = ReductionDialogFragment.newInstance(this)
 
     private val customerDetailsViewModel: CustomerDetailsViewModel by activityViewModels {
         Injection.provideViewModelFactory()
@@ -28,13 +32,15 @@ class CustomerDetailsFragment : Fragment() {
         @JvmStatic
         fun newInstance(
             customerId: Int,
-            customerModificationFabListener: CustomerModificationFabListener
+            customerModificationFabListener: CustomerModificationFabListener,
+            reductionChangeListener: ReductionChangeListener
         ) =
             CustomerDetailsFragment().apply {
                 arguments = Bundle().apply {
                     putInt(CUSTOMER_ID_KEY, customerId)
                 }
                 this.customerModificationFabListener = customerModificationFabListener
+                this.reductionChangeListener = reductionChangeListener
             }
     }
 
@@ -63,15 +69,33 @@ class CustomerDetailsFragment : Fragment() {
             lifecycleOwner = this@CustomerDetailsFragment
             viewModel = customerDetailsViewModel
             fragmentCustomerDetailsModificationFab.setOnClickListener {
-                customer.id?.let{
+                customer.id?.let {
                     customerModificationFabListener.onCustomerModificationFabClick(it)
                 }
             }
         }
+        configureReductionButton()
         return binding.root
+    }
+
+    private fun configureReductionButton() {
+        binding.fragmentCustomerDetailsUseReductionButton.setOnClickListener {
+            val fragmentTransaction = requireActivity().supportFragmentManager.beginTransaction()
+            reductionDialogFragment.show(fragmentTransaction, "reduction")
+        }
     }
 
     interface CustomerModificationFabListener {
         fun onCustomerModificationFabClick(customerId: Int)
+    }
+
+    interface ReductionChangeListener {
+        fun onReductionChange()
+    }
+
+    override fun onReductionButtonClick() {
+        reductionDialogFragment.dismiss()
+        reductionChangeListener.onReductionChange()
+        customerDetailsViewModel.useReduction()
     }
 }

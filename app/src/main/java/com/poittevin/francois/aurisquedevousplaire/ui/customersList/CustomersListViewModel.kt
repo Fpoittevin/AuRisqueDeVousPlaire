@@ -7,6 +7,7 @@ import com.poittevin.francois.aurisquedevousplaire.repositories.CustomerReposito
 class CustomersListViewModel(private val customerRepository: CustomerRepository) : ViewModel() {
 
     val searchLiveData = MutableLiveData<String>().apply { value = "" }
+    val listChange = MutableLiveData<Boolean>().apply { value = false }
 
     private val customersList = MediatorLiveData<List<Customer>>().apply {
         addSource(
@@ -19,7 +20,17 @@ class CustomersListViewModel(private val customerRepository: CustomerRepository)
             }) { customers ->
             value = customers
         }
+        addSource(
+            Transformations.switchMap(listChange) {
+                customerRepository.getCustomersList(null)
+
+            }
+        ) { customers ->
+            value = customers
+
+        }
     }
+
 
     fun getCustomersList(): LiveData<List<Customer>> = customersList
 }

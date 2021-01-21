@@ -26,4 +26,16 @@ class CustomerDetailsViewModel(private val customerRepository: CustomerRepositor
             }
         }
     }
+
+    fun useReduction() {
+        customer.value?.let {
+            it.id?.let { id ->
+                customer.addSource(
+                    customerRepository.useReduction(id)
+                ) { newCustomer ->
+                    customer.value = newCustomer
+                }
+            }
+        }
+    }
 }
