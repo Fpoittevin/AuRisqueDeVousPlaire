@@ -7,13 +7,13 @@ import com.poittevin.francois.aurisquedevousplaire.utils.Utils
 object DateAdapter {
 
     @JvmStatic
-    @BindingAdapter("app:day", "app:month", requireAll = false)
-    fun bindDate(view: TextView, day: Int?, month: Int?) {
-        if(day != null && month != null) {
-            val stringDay = Utils.formatIntToStringWithZero(day)
-            val stringMonth = Utils.formatIntToStringWithZero(month)
-            val stringDate = "$stringDay/$stringMonth"
-            view.text = stringDate
+    @BindingAdapter("app:timestamp", requireAll = false)
+    fun bindDate(view: TextView, timestamp: Long?) {
+        timestamp?.let {
+            val date = Utils.convertTimestampToStringDate(it)
+            date?.let { dateVal ->
+                view.text = dateVal
+            }
         }
     }
 }

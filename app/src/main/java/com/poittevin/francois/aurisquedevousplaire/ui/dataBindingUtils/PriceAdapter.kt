@@ -2,35 +2,18 @@ package com.poittevin.francois.aurisquedevousplaire.ui.dataBindingUtils
 
 import android.widget.TextView
 import androidx.databinding.BindingAdapter
-import androidx.databinding.InverseBindingAdapter
-import com.google.android.material.textfield.TextInputEditText
 
 object PriceAdapter {
 
-    @BindingAdapter("android:text")
+    @BindingAdapter("app:price")
     @JvmStatic
-    fun setValue(view: TextInputEditText, newValue: Float?) {
-        if (view.text.toString() != newValue.toString()) {
-            if (newValue != null && !newValue.equals(0F)) {
-                view.setText(newValue.toString())
-            } else {
-                view.setText("")
-            }
-        }
-    }
+    fun bindPriceWithCurrency(view: TextView, price: Double) {
 
-    @JvmStatic
-    @InverseBindingAdapter(attribute = "android:text")
-    fun getValue(view: TextInputEditText): Float {
-        return view.text.toString().toFloat()
-    }
+        val stringPriceFormatted = String.format("%.2f", price)
+        val stringPriceFormattedWithCurrency = "$stringPriceFormatted €"
 
-    @BindingAdapter("android:text")
-    @JvmStatic
-    fun setValue(view: TextView, newValue: Float) {
-        if (view.text.toString() != newValue.toString()) {
-            val textValue = "$newValue €"
-            view.text = textValue
+        if (view.text.toString() != stringPriceFormattedWithCurrency) {
+            view.text = stringPriceFormattedWithCurrency
         }
     }
 }

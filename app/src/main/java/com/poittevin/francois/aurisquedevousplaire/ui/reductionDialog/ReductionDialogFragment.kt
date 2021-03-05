@@ -15,7 +15,7 @@ class ReductionDialogFragment: DialogFragment() {
 
     private lateinit var binding: FragmentDialogReductionBinding
     private val reductionViewModel: ReductionViewModel by activityViewModels {
-        Injection.provideViewModelFactory()
+        Injection.provideViewModelFactory(requireContext())
     }
     private lateinit var reductionButtonClickListener: ReductionButtonClickListener
 
@@ -37,10 +37,13 @@ class ReductionDialogFragment: DialogFragment() {
         binding.apply {
             lifecycleOwner = viewLifecycleOwner
             viewModel = reductionViewModel
-        }
 
-        binding.fragmentDialogReductionButton.setOnClickListener {
-            reductionButtonClickListener.onReductionButtonClick()
+            fragmentDialogReductionUseButton.setOnClickListener {
+                reductionButtonClickListener.onReductionButtonClick()
+            }
+            fragmentDialogReductionCancelButton.setOnClickListener {
+                requireDialog().cancel()
+            }
         }
 
         return binding.root
@@ -48,5 +51,10 @@ class ReductionDialogFragment: DialogFragment() {
 
     interface ReductionButtonClickListener {
         fun onReductionButtonClick()
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        reductionViewModel.initValues()
     }
 }

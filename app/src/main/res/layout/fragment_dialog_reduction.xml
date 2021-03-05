@@ -4,6 +4,8 @@
 
     <data>
 
+        <import type="com.poittevin.francois.aurisquedevousplaire.ui.dataBindingUtils.Converter" />
+
         <variable
             name="viewModel"
             type="com.poittevin.francois.aurisquedevousplaire.ui.reductionDialog.ReductionViewModel" />
@@ -16,7 +18,7 @@
         android:orientation="vertical">
 
         <RelativeLayout
-            android:layout_width="300dp"
+            android:layout_width="400dp"
             android:layout_height="wrap_content"
             android:background="@color/primaryColor"
             android:orientation="horizontal"
@@ -27,7 +29,9 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_margin="@dimen/default_margin"
-                android:text="@string/reductions" />
+                android:drawablePadding="@dimen/default_margin"
+                android:text="@string/reductions"
+                app:drawableStartCompat="@drawable/ic_baseline_promotion_24" />
 
         </RelativeLayout>
 
@@ -40,8 +44,8 @@
             <com.google.android.material.textfield.TextInputEditText
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:inputType="numberDecimal"
-                android:text="@={viewModel.price}" />
+                android:inputType="number"
+                android:text="@={Converter.intToString(viewModel.price)}" />
 
         </com.google.android.material.textfield.TextInputLayout>
 
@@ -49,20 +53,41 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_margin="@dimen/default_margin"
-            android:text="prix après réduction :"/>
+            android:text="@string/price_after_reduction" />
+
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:gravity="center_horizontal"
             android:layout_margin="@dimen/default_margin"
-            android:text="@{String.valueOf(viewModel.priceWithReduction)}" />
+            android:gravity="center_horizontal"
+            style="@style/bigText"
+            app:price="@{viewModel.priceWithReduction}" />
 
-        <com.google.android.material.button.MaterialButton
-            style="@style/buttonStyle"
-            android:layout_gravity="center_horizontal"
-            android:text="@string/useTheReduction"
-            android:id="@+id/fragment_dialog_reduction_button"
-            app:icon="@drawable/ic_baseline_promotion_24" />
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="end"
+            android:orientation="horizontal">
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/fragment_dialog_reduction_cancel_button"
+                style="@style/Widget.MaterialComponents.Button.TextButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_margin="@dimen/default_margin"
+                android:text="@string/cancel"
+                app:icon="@drawable/ic_baseline_close_24" />
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/fragment_dialog_reduction_use_button"
+                style="@style/Widget.MaterialComponents.Button.TextButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_margin="@dimen/default_margin"
+                android:text="@string/useTheReduction"
+                app:icon="@drawable/ic_baseline_promotion_24" />
+
+        </LinearLayout>
 
     </LinearLayout>
 </layout>

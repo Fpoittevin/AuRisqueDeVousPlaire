@@ -9,16 +9,36 @@
     <string name="lastName">Nom</string>
     <string name="emailAddress">Adresse email</string>
     <string name="phoneNumber">Numéro de téléphone</string>
-    <string name="day">Jour</string>
-    <string name="month">Mois</string>
     <string name="comment">Commentaire</string>
     <string name="useReduction">utiliser une réduction</string>
     <string name="reductions">réductions</string>
-    <string name="reduction">réduction</string>
-    <string name="useTheReduction">utiliser la réduction</string>
+    <string name="useTheReduction">utiliser</string>
 
     <string name="birthday_icon">birthday icon</string>
     <string name="promotion_icon">promotion icon</string>
+    <string name="person_icon">person icon</string>
 
     <string name="send">envoyer</string>
+
+    <string name="no_information">non renseigné</string>
+    
+    <string name="delete_button">delete button</string>
+    <string name="modification_fab">modification fab</string>
+    <string name="save_fab">save fab</string>
+    <string name="contact_choice">choix de contact</string>
+    <string name="email">email</string>
+    <string name="emails">emails</string>
+    <string name="sms">sms</string>
+    <string name="nothing">nothing</string>
+    <string name="birthday">birthday</string>
+    <string name="customer_with_reduction">client avec réduction</string>
+    <string name="number_of_cards_between">nombre de cartes compris entre</string>
+    <string name="people_will_receive_this_message">personnes recevront ce message</string>
+    <string name="sms_per_person">sms par personne</string>
+    <string name="currency_with_info">€ HT (prix approximatif)</string>
+    <string name="char_number">caractères (149 caractères / sms)</string>
+    <string name="cancel">annuler</string>
+    <string name="price_after_reduction">prix après réduction</string>
+
+    <string name="server_error">"une erreur s'est produite lors de la synchronisation avec le serveur"</string>
 </resources>

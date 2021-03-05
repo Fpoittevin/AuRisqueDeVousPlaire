@@ -8,21 +8,18 @@ import com.poittevin.francois.aurisquedevousplaire.utils.Utils
 object IconAdapter {
     @JvmStatic
     @BindingAdapter(
-        "birthdayDay", "birthdayMonth",
+        "birthdayTimestamp",
         requireAll = false
     )
     fun bindBirthdayIcon(
         view: ImageView,
-        birthdayDay: Int?,
-        birthdayMonth: Int?
+        birthdayTimestamp: Long?
     ) {
         view.visibility = View.INVISIBLE
-        if (
-            birthdayDay != null
-            && birthdayMonth != null
-            && Utils.isBirthdayToday(birthdayDay, birthdayMonth)
-        ) {
-            view.visibility = View.VISIBLE
+        birthdayTimestamp?.let {
+            if (Utils.isBirthdayToday(birthdayTimestamp)) {
+                view.visibility = View.VISIBLE
+            }
         }
     }
 

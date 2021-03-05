@@ -1,17 +1,12 @@
 package com.poittevin.francois.aurisquedevousplaire.ui.customersList
 
-import android.content.Context
 import android.view.LayoutInflater
 import android.view.ViewGroup
-import androidx.core.content.res.ResourcesCompat
 import androidx.recyclerview.widget.RecyclerView
-import com.poittevin.francois.aurisquedevousplaire.R
 import com.poittevin.francois.aurisquedevousplaire.databinding.RecyclerViewCustomerItemBinding
 import com.poittevin.francois.aurisquedevousplaire.models.Customer
-import com.poittevin.francois.aurisquedevousplaire.utils.Utils
 
 class CustomersAdapter(
-    private val context: Context,
     private val customerItemClickCallback: CustomerItemClickCallback
 ) : RecyclerView.Adapter<CustomerViewHolder>() {
 

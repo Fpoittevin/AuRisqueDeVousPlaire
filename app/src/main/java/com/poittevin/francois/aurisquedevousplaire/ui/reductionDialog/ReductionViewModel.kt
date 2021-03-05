@@ -7,12 +7,16 @@ import com.poittevin.francois.aurisquedevousplaire.utils.Utils
 
 class ReductionViewModel: ViewModel() {
 
-    val price = MutableLiveData<Float>().apply {
-        value = 0F
+    val price = MutableLiveData<Int>().apply {
+        value = 0
     }
-    val priceWithReduction = MediatorLiveData<Float>().apply {
+    val priceWithReduction = MediatorLiveData<Double>().apply {
         addSource(price) {
-            value = Utils.calculateReduction(it)
+            value = Utils.calculateReduction(it.toDouble())
         }
+    }
+
+    fun initValues() {
+        price.value = 0
     }
 }

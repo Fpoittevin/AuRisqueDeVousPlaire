@@ -7,7 +7,6 @@ import android.view.ViewGroup
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
-import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.poittevin.francois.aurisquedevousplaire.R
 import com.poittevin.francois.aurisquedevousplaire.databinding.FragmentCustomersListBinding
@@ -17,9 +16,9 @@ class CustomersListFragment : Fragment() {
 
     private lateinit var binding: FragmentCustomersListBinding
     private val customersListViewModel: CustomersListViewModel by activityViewModels {
-        Injection.provideViewModelFactory()
+        Injection.provideViewModelFactory(requireContext())
     }
-    lateinit var customersAdapter: CustomersAdapter
+    private lateinit var customersAdapter: CustomersAdapter
 
     companion object {
         @JvmStatic
@@ -39,7 +38,7 @@ class CustomersListFragment : Fragment() {
 
     private fun configureRecyclerView() {
         customersAdapter =
-            CustomersAdapter(requireContext(), requireActivity() as CustomersAdapter.CustomerItemClickCallback)
+            CustomersAdapter(requireActivity() as CustomersAdapter.CustomerItemClickCallback)
         val linearLayoutManager = LinearLayoutManager(requireContext())
         binding.fragmentCustomersListRecyclerView.apply {
             layoutManager = linearLayoutManager
@@ -49,7 +48,7 @@ class CustomersListFragment : Fragment() {
         updateCustomersList()
     }
 
-    fun updateCustomersList() {
+    private fun updateCustomersList() {
         customersListViewModel.getCustomersList().observe(viewLifecycleOwner, {
             customersAdapter.updateCustomersList(it)
         })

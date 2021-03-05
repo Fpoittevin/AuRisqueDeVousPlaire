@@ -1,237 +1,180 @@
 package com.poittevin.francois.aurisquedevousplaire.repositories
 
-import android.util.Log
+import android.content.Context
 import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
-import com.poittevin.francois.aurisquedevousplaire.api.CustomerService
+import androidx.lifecycle.MediatorLiveData
+import androidx.sqlite.db.SimpleSQLiteQuery
+import androidx.work.*
+import com.poittevin.francois.aurisquedevousplaire.api.CustomerHelper
+import com.poittevin.francois.aurisquedevousplaire.database.dao.CustomerDao
 import com.poittevin.francois.aurisquedevousplaire.models.Customer
-import retrofit2.Call
-import retrofit2.Callback
-import retrofit2.Response
+import com.poittevin.francois.aurisquedevousplaire.utils.ContactChoice
+import com.poittevin.francois.aurisquedevousplaire.workers.BaseApiWorker.Companion.CUSTOMER_ID_KEY
+import com.poittevin.francois.aurisquedevousplaire.workers.DeleteCustomerWorker
+import com.poittevin.francois.aurisquedevousplaire.workers.InsertCustomerWorker
+import com.poittevin.francois.aurisquedevousplaire.workers.UpdateCustomerWorker
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.launch
 
-class CustomerRepository {
+class CustomerRepository(private val customerDao: CustomerDao, private val context: Context) {
 
-    fun getCustomer(id: Int): MutableLiveData<Customer> {
+    private val customerHelper = CustomerHelper()
+    private val networkConstraints = Constraints.Builder()
+        .setRequiredNetworkType(NetworkType.CONNECTED)
+        .build()
 
-        val customerLiveData = MutableLiveData<Customer>()
+    fun getCustomer(id: Int) = customerDao.getCustomerById(id)
 
-        CustomerService
-            .retrofit
-            .create(
-                CustomerService::class.java
-            ).getCustomer(id)
-            .enqueue(object : Callback<Customer> {
-                override fun onResponse(
-                    call: Call<Customer>,
-                    response: Response<Customer>
-                ) {
-                    response.body()?.let { customer ->
-                        customerLiveData.value = customer
+    fun getCustomerForSync(id: Int) = customerDao.getCustomerForSync(id)
+
+    fun getCustomersList() = MediatorLiveData<List<Customer>>().apply {
+        addSource(customerDao.getCustomersList()) {
+            if (it.isEmpty()) {
+                addSource(customerHelper.getCustomersList()) { listFromDb ->
+                    GlobalScope.launch(Dispatchers.IO) {
+                        for (customer in listFromDb) {
+                            customerDao.insertCustomer(customer)
+                        }
                     }
                 }
-
-                override fun onFailure(call: Call<Customer>, t: Throwable) {
-                    Log.e("error", t.message!!)
-                }
-
-            })
-        return customerLiveData
+            } else {
+                postValue(it)
+            }
+        }
     }
 
-    fun getCustomersList(search: String?): MutableLiveData<List<Customer>> {
+    suspend fun updateCustomer(customer: Customer) {
+        customerDao.updateCustomer(customer)
 
-        val customersListLiveData = MutableLiveData<List<Customer>>()
-        val customerService = CustomerService
-            .retrofit
-            .create(
-                CustomerService::class.java
-            )
+        val data = Data.Builder().apply {
+            customer.id?.let { putInt(CUSTOMER_ID_KEY, it) }
+        }
 
-        val callback = object : Callback<List<Customer>> {
-            override fun onResponse(
-                call: Call<List<Customer>>,
-                response: Response<List<Customer>>
-            ) {
-                response.body()?.let { customersList ->
-                    customersListLiveData.value = customersList
-                }
-            }
+        val networkWorkRequest = OneTimeWorkRequest
+            .Builder(UpdateCustomerWorker::class.java)
+            .setInputData(data.build())
+            .setConstraints(networkConstraints)
+            .build()
 
-            override fun onFailure(call: Call<List<Customer>>, t: Throwable) {
-                Log.e("error", t.message!!)
+        WorkManager.getInstance(context).enqueue(networkWorkRequest)
+    }
+
+    fun updateCustomerFromServer(customer: Customer) {
+        customerHelper.updateCustomer(customer)
+    }
+
+    suspend fun insertCustomer(customer: Customer) {
+        customer.id = customerDao.insertCustomer(customer).toInt()
+
+        val data = Data.Builder().apply {
+            customer.id?.let { putInt(CUSTOMER_ID_KEY, it) }
+        }
+
+        val networkWorkRequest = OneTimeWorkRequest
+            .Builder(InsertCustomerWorker::class.java)
+            .setInputData(data.build())
+            .setConstraints(networkConstraints)
+            .build()
+
+        WorkManager.getInstance(context).enqueue(networkWorkRequest)
+    }
+
+    fun insertCustomerFromServer(customer: Customer) {
+        customerHelper.insertCustomer(customer)
+    }
+
+    suspend fun deleteCustomer(customer: Customer) {
+        customerDao.deleteCustomer(customer)
+
+        val data = Data.Builder().apply {
+            customer.id?.let { putInt(CUSTOMER_ID_KEY, it) }
+        }
+
+        val networkWorkRequest = OneTimeWorkRequest
+            .Builder(DeleteCustomerWorker::class.java)
+            .setInputData(data.build())
+            .setConstraints(networkConstraints)
+            .build()
+
+        WorkManager.getInstance(context).enqueue(networkWorkRequest)
+    }
+
+    fun deleteCustomerFromServer(customer: Customer) {
+        customerHelper.deleteCustomer(customer)
+    }
+
+    fun searchCustomers(search: String): LiveData<List<Customer>> {
+        val sqlStringRequest =
+            "SELECT * FROM Customer WHERE lastName LIKE :search OR firstName LIKE :search OR emailAddress LIKE :search OR phoneNumber LIKE :search"
+        val args = arrayOf("%$search%")
+        val sqlRequest = SimpleSQLiteQuery(sqlStringRequest, args)
+
+        return customerDao.getCustomersBySearch(sqlRequest)
+    }
+
+    fun getNumberOfMessages(
+        withReduction: Boolean,
+        minMaxNumberOfCards: Array<Int?>,
+        contactChoice: ContactChoice?
+    ): LiveData<Int?> {
+
+        val stringBuilder = StringBuilder()
+        val args = ArrayList<Any>()
+
+        fun StringBuilder.addWhereOrAnd() {
+            if (contains("WHERE")) {
+                append(" AND ")
+            } else {
+                append(" WHERE ")
             }
         }
 
-        search?.let {
-            customerService
-                .searchCustomers(mapOf("searchString" to it))
-                .enqueue(callback)
+        stringBuilder.append("SELECT COUNT(*) FROM CUSTOMER").apply {
 
-        } ?: run {
-            customerService
-                .getCustomersList()
-                .enqueue(callback)
+            contactChoice?.let {
+                when (it) {
+                    ContactChoice.SMS -> {
+                        addWhereOrAnd()
+                        append("phoneNumber IS NOT NULL AND contactChoice = ?")
+
+                        args.add(2)
+                    }
+                    ContactChoice.EMAIL -> {
+                        addWhereOrAnd()
+                        append("emailAddress IS NOT NULL AND contactChoice = ?")
+
+                        args.add(1)
+                    }
+                    ContactChoice.NOTHING -> {
+                        addWhereOrAnd()
+                        append("contactChoice = ?")
+
+                        args.add(0)
+                    }
+                }
+            }
+
+            if (withReduction) {
+                addWhereOrAnd()
+                append("reductionNumber > 0")
+            }
+
+            minMaxNumberOfCards[0]?.let {
+                addWhereOrAnd()
+                append("cardsNumber >= ?")
+                args.add(it)
+            }
+
+            minMaxNumberOfCards[1]?.let {
+                addWhereOrAnd()
+                append("cardsNumber <= ?")
+                args.add(it)
+            }
         }
 
-        return customersListLiveData
-    }
+        val sqlRequest = SimpleSQLiteQuery(stringBuilder.toString(), args.toArray())
 
-    fun updateCustomer(customer: Customer): MutableLiveData<Customer> {
-
-        val customerLiveData = MutableLiveData<Customer>()
-
-        CustomerService
-            .retrofit
-            .create(
-                CustomerService::class.java
-            ).updateCustomer(customer)
-            .enqueue(object : Callback<Customer> {
-                override fun onResponse(
-                    call: Call<Customer>,
-                    response: Response<Customer>
-                ) {
-                    response.body()?.let { customer ->
-                        customerLiveData.value = customer
-                    }
-                }
-
-                override fun onFailure(call: Call<Customer>, t: Throwable) {
-                    Log.e("call", call.toString())
-                    Log.e("error", t.message!!)
-                }
-
-            })
-        return customerLiveData
-    }
-
-    fun insertCustomer(customer: Customer): MutableLiveData<Customer> {
-
-        val customerLiveData = MutableLiveData<Customer>()
-
-        CustomerService
-            .retrofit
-            .create(
-                CustomerService::class.java
-            ).insertCustomer(customer)
-            .enqueue(object : Callback<Customer> {
-                override fun onResponse(
-                    call: Call<Customer>,
-                    response: Response<Customer>
-                ) {
-                    response.body()?.let { customer ->
-                        customerLiveData.value = customer
-                    }
-                }
-
-                override fun onFailure(call: Call<Customer>, t: Throwable) {
-                    Log.e("call", call.toString())
-                    Log.e("error", t.message!!)
-                }
-
-            })
-        return customerLiveData
-    }
-
-    fun getMinMaxNumberOfCards(): LiveData<Array<Int>> {
-        val minMaxLiveData = MutableLiveData<Array<Int>>()
-        CustomerService
-            .retrofit
-            .create(
-                CustomerService::class.java
-            ).getMinMaxNumberOfCards()
-            .enqueue(object : Callback<Array<Int>> {
-                override fun onResponse(call: Call<Array<Int>>, response: Response<Array<Int>>) {
-                    response.body()?.let { minMax ->
-                        Log.e("min", minMax[0].toString())
-                        Log.e("max", minMax[1].toString())
-                        minMaxLiveData.value = minMax
-                    }
-                }
-
-                override fun onFailure(call: Call<Array<Int>>, t: Throwable) {
-                    Log.e("call", call.toString())
-                    Log.e("error", t.message!!)
-                }
-
-            })
-        return minMaxLiveData
-    }
-
-    fun getNumberOfCustomersInRangeCardsNumber(min: Int, max: Int): LiveData<Int> {
-        val numberOfCustomers = MutableLiveData<Int>()
-        CustomerService
-            .retrofit
-            .create(CustomerService::class.java)
-            .getNumberOfCustomersInRangeCardsNumber(mapOf("min" to min, "max" to max))
-            .enqueue(object : Callback<Int> {
-                override fun onResponse(call: Call<Int>, response: Response<Int>) {
-                    response.body()?.let { number ->
-                        numberOfCustomers.value = number
-                    }
-                }
-
-                override fun onFailure(call: Call<Int>, t: Throwable) {
-                    Log.e("call", call.toString())
-                    Log.e("error", t.message!!)
-                }
-
-            })
-        return numberOfCustomers
-    }
-
-    fun addStamp(id: Int): MutableLiveData<Customer> {
-
-        val customerLiveData = MutableLiveData<Customer>()
-
-        CustomerService
-            .retrofit
-            .create(
-                CustomerService::class.java
-            ).addStamp(id)
-            .enqueue(object : Callback<Customer> {
-                override fun onResponse(
-                    call: Call<Customer>,
-                    response: Response<Customer>
-                ) {
-                    response.body()?.let { customer ->
-                        customerLiveData.value = customer
-                    }
-                }
-
-                override fun onFailure(call: Call<Customer>, t: Throwable) {
-                    Log.e("call", call.toString())
-                    Log.e("error", t.message!!)
-                }
-
-            })
-        return customerLiveData
-    }
-
-    fun useReduction(id: Int): MutableLiveData<Customer> {
-
-        val customerLiveData = MutableLiveData<Customer>()
-
-        CustomerService
-            .retrofit
-            .create(
-                CustomerService::class.java
-            ).useReduction(id)
-            .enqueue(object : Callback<Customer> {
-                override fun onResponse(
-                    call: Call<Customer>,
-                    response: Response<Customer>
-                ) {
-                    response.body()?.let { customer ->
-                        customerLiveData.value = customer
-                    }
-                }
-
-                override fun onFailure(call: Call<Customer>, t: Throwable) {
-                    Log.e("call", call.toString())
-                    Log.e("error", t.message!!)
-                }
-
-            })
-        return customerLiveData
+        return customerDao.getNumberOfMessages(sqlRequest)
     }
 }

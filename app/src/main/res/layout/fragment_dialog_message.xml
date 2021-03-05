@@ -27,101 +27,249 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_margin="@dimen/default_margin"
-                android:text="@string/message" />
+                android:drawablePadding="@dimen/default_margin"
+                android:text="@string/message"
+                app:drawableStartCompat="@drawable/ic_baseline_send_24" />
 
         </RelativeLayout>
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:baselineAligned="false"
             android:orientation="horizontal">
 
-            <com.google.android.material.switchmaterial.SwitchMaterial
-                android:layout_width="match_parent"
+            <LinearLayout
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_margin="@dimen/default_margin"
-                android:text="client avec réduction" />
+                android:layout_weight="50"
+                android:orientation="vertical">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal">
+
+                    <com.google.android.material.switchmaterial.SwitchMaterial
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_margin="@dimen/default_margin"
+                        android:checked="@={viewModel.withReductionLiveData}"
+                        android:text="@string/customer_with_reduction" />
+
+                </LinearLayout>
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="@dimen/default_margin"
+                    android:text="@string/number_of_cards_between" />
+
+                <com.google.android.material.slider.RangeSlider
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="@dimen/default_margin"
+                    android:stepSize="1"
+                    android:valueFrom="@{viewModel.fromToNumberOfCards[0]}"
+                    android:valueTo="@{viewModel.fromToNumberOfCards[1]}"
+                    app:values="@={viewModel.minMaxNumberOfCardsLiveData}" />
+
+                <androidx.constraintlayout.widget.ConstraintLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_margin="@dimen/default_margin"
+                        app:default="@{viewModel.fromToNumberOfCards[0]}"
+                        app:layout_constraintLeft_toLeftOf="parent"
+                        app:layout_constraintTop_toTopOf="parent"
+                        app:range_slider_value="@{viewModel.minMaxNumberOfCardsLiveData[0]}" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_margin="@dimen/default_margin"
+                        app:default="@{viewModel.fromToNumberOfCards[1]}"
+                        app:layout_constraintRight_toRightOf="parent"
+                        app:layout_constraintTop_toTopOf="parent"
+                        app:range_slider_value="@{viewModel.minMaxNumberOfCardsLiveData[1]}" />
+
+                </androidx.constraintlayout.widget.ConstraintLayout>
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="50"
+                android:orientation="vertical">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="@dimen/default_margin"
+                    android:orientation="horizontal">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginEnd="@dimen/default_small_margin"
+                        android:text="@{String.valueOf(viewModel.numberOfReceiversLiveData)}" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/people_will_receive_this_message" />
+
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="@dimen/default_margin"
+                    android:orientation="horizontal">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginEnd="@dimen/default_small_margin"
+                        android:text="@{String.valueOf(viewModel.numberOfEmailReceiversLiveData)}" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/emails" />
+
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="@dimen/default_margin"
+                    android:orientation="horizontal">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginEnd="@dimen/default_small_margin"
+                        android:text="@{String.valueOf(viewModel.numberOfSmsLiveData)}" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/sms" />
+
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="@dimen/default_margin"
+                    android:orientation="horizontal">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginEnd="@dimen/default_small_margin"
+                        android:text="@{String.valueOf(viewModel.numberOfSmsPerPersonLiveData)}" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/sms_per_person" />
+
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="@dimen/default_margin"
+                    android:orientation="horizontal">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginEnd="@dimen/default_small_margin"
+                        android:text="@{String.valueOf(viewModel.priceLiveData)}" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/currency_with_info" />
+
+                </LinearLayout>
+
+            </LinearLayout>
 
         </LinearLayout>
 
-        <TextView
+        <LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_margin="@dimen/default_margin"
-            android:text="nombre de cartes compris entre" />
-
-        <com.google.android.material.slider.RangeSlider
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_margin="@dimen/default_margin"
-            android:stepSize="1"
-            android:valueFrom="@{viewModel.fromToNumberOfCards[0]}"
-            android:valueTo="@{viewModel.fromToNumberOfCards[1]}"
-            app:values="@={viewModel.minMax}" />
-
-        <androidx.constraintlayout.widget.ConstraintLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content">
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_margin="@dimen/default_margin"
-                android:text="@{String.valueOf(viewModel.minMax[0])}"
-                app:layout_constraintLeft_toLeftOf="parent"
-                app:layout_constraintTop_toTopOf="parent" />
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_margin="@dimen/default_margin"
-                android:text="@{String.valueOf(viewModel.minMax[1])}"
-                app:layout_constraintRight_toRightOf="parent"
-                app:layout_constraintTop_toTopOf="parent" />
-
-        </androidx.constraintlayout.widget.ConstraintLayout>
-
-        <View style="@style/divider" />
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_margin="@dimen/default_margin"
+            android:layout_marginTop="@dimen/default_big_margin"
+            android:layout_marginEnd="@dimen/default_margin"
+            android:layout_gravity="end"
             android:orientation="horizontal">
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginRight="@dimen/default_small_margin"
-                android:text="@{String.valueOf(viewModel.numberOfCustomers)}" />
+                android:textSize="12sp"
+                android:layout_marginEnd="@dimen/default_small_margin"
+                android:text="@{String.valueOf(viewModel.numberOfCharTotalLiveData)}" />
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="personnes recevront ce message" />
+                android:textSize="12sp"
+                android:text="@string/char_number" />
 
         </LinearLayout>
 
         <com.google.android.material.textfield.TextInputLayout
             style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
-            android:layout_width="400dp"
+            android:layout_width="800dp"
             android:layout_height="wrap_content"
             android:layout_margin="@dimen/default_margin"
             android:hint="@string/message">
 
             <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/fragment_dialog_message_text_input"
                 android:layout_width="match_parent"
                 android:layout_height="200dp"
-                android:gravity="top" />
+                android:gravity="top"
+                android:text="@={viewModel.textMessageLiveData}" />
 
         </com.google.android.material.textfield.TextInputLayout>
 
-        <com.google.android.material.button.MaterialButton
-            android:id="@+id/fragment_dialog_message_send_button"
-            style="@style/buttonStyle"
-            android:layout_gravity="center_horizontal"
-            android:text="@string/send"
-            app:icon="@drawable/ic_baseline_send_24" />
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="end"
+            android:orientation="horizontal">
+
+            <com.google.android.material.button.MaterialButton
+                android:layout_width="wrap_content"
+                android:id="@+id/fragment_dialog_message_cancel_button"
+                android:layout_height="wrap_content"
+                android:text="@string/cancel"
+                style="@style/Widget.MaterialComponents.Button.TextButton"
+                android:layout_margin="@dimen/default_margin"
+                app:icon="@drawable/ic_baseline_close_24" />
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/fragment_dialog_message_send_button"
+                style="@style/Widget.MaterialComponents.Button.TextButton"
+                android:layout_margin="@dimen/default_margin"
+                android:text="@string/send"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                app:icon="@drawable/ic_baseline_send_24" />
+
+        </LinearLayout>
+
     </LinearLayout>
 
 </layout>

@@ -6,6 +6,7 @@
     <data>
 
         <import type="com.poittevin.francois.aurisquedevousplaire.ui.dataBindingUtils.Converter" />
+        <import type="com.poittevin.francois.aurisquedevousplaire.utils.ContactChoice" />
 
         <variable
             name="viewModel"
@@ -19,165 +20,184 @@
 
         <com.google.android.material.card.MaterialCardView
             android:layout_width="match_parent"
-            android:layout_margin="@dimen/default_margin"
-            android:layout_height="wrap_content">
+            android:layout_height="wrap_content"
+            android:layout_margin="@dimen/default_margin">
 
-        <ScrollView
-            android:id="@+id/fragment_customer_form_scroll_view"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent">
-
-            <LinearLayout
+            <ScrollView
+                android:id="@+id/fragment_customer_form_scroll_view"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="vertical">
-
-                <ProgressBar
-                    android:id="@+id/fragment_customer_form_progress_bar"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content" />
+                android:layout_height="match_parent">
 
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:baselineAligned="false"
-                    android:orientation="horizontal">
+                    android:orientation="vertical">
 
-                    <com.google.android.material.textfield.TextInputLayout
-                        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_margin="@dimen/default_margin"
-                        android:layout_weight="50"
-                        android:hint="@string/firstName">
+                    <ProgressBar
+                        android:id="@+id/fragment_customer_form_progress_bar"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content" />
 
-                        <com.google.android.material.textfield.TextInputEditText
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:text="@={viewModel.customer.firstName}" />
-
-                    </com.google.android.material.textfield.TextInputLayout>
-
-                    <com.google.android.material.textfield.TextInputLayout
-                        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_margin="@dimen/default_margin"
-                        android:layout_weight="50"
-                        android:hint="@string/lastName">
-
-                        <com.google.android.material.textfield.TextInputEditText
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:text="@={viewModel.customer.lastName}" />
-
-                    </com.google.android.material.textfield.TextInputLayout>
-
-                </LinearLayout>
-
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:orientation="horizontal">
-
-                    <com.google.android.material.textfield.TextInputLayout
-                        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_margin="@dimen/default_margin"
-                        android:layout_weight="50">
-
-                        <com.google.android.material.textfield.TextInputEditText
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:hint="@string/emailAddress"
-                            android:text="@={viewModel.customer.emailAddress}" />
-
-                    </com.google.android.material.textfield.TextInputLayout>
-
-                    <com.google.android.material.textfield.TextInputLayout
-                        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_margin="@dimen/default_margin"
-                        android:layout_weight="50">
-
-                        <com.google.android.material.textfield.TextInputEditText
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:hint="@string/phoneNumber"
-                            android:inputType="number"
-                            android:text="@={viewModel.customer.phoneNumber}" />
-
-                    </com.google.android.material.textfield.TextInputLayout>
-
-                </LinearLayout>
-
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:orientation="horizontal">
-
-                    <com.google.android.material.textfield.TextInputLayout
-                        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_margin="@dimen/default_margin"
-                        android:layout_weight="50">
-
-                        <com.google.android.material.textfield.TextInputEditText
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:hint="@string/day"
-                            android:inputType="number"
-                            android:text="@={Converter.intToStringDate(viewModel.customer.birthdayDay)}" />
-
-                    </com.google.android.material.textfield.TextInputLayout>
-
-                    <com.google.android.material.textfield.TextInputLayout
-                        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_margin="@dimen/default_margin"
-                        android:layout_weight="50"
-                        android:hint="@string/month">
-
-                        <com.google.android.material.textfield.TextInputEditText
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:inputType="number"
-                            android:text="@={Converter.intToStringDate(viewModel.customer.birthdayMonth)}" />
-
-                    </com.google.android.material.textfield.TextInputLayout>
-
-                </LinearLayout>
-
-                <com.google.android.material.textfield.TextInputLayout
-                    style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_margin="@dimen/default_margin">
-
-                    <com.google.android.material.textfield.TextInputEditText
+                    <LinearLayout
                         android:layout_width="match_parent"
-                        android:layout_height="300dp"
-                        android:gravity="top"
-                        android:hint="@string/comment"
-                        android:text="@={viewModel.customer.comment}" />
+                        android:layout_height="wrap_content"
+                        android:baselineAligned="false"
+                        android:orientation="horizontal">
 
-                </com.google.android.material.textfield.TextInputLayout>
+                        <com.google.android.material.textfield.TextInputLayout
+                            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_margin="@dimen/default_margin"
+                            android:layout_weight="50"
+                            android:hint="@string/firstName">
 
-            </LinearLayout>
+                            <com.google.android.material.textfield.TextInputEditText
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:text="@={viewModel.customer.firstName}" />
 
-        </ScrollView>
+                        </com.google.android.material.textfield.TextInputLayout>
+
+                        <com.google.android.material.textfield.TextInputLayout
+                            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_margin="@dimen/default_margin"
+                            android:layout_weight="50"
+                            android:hint="@string/lastName">
+
+                            <com.google.android.material.textfield.TextInputEditText
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:text="@={viewModel.customer.lastName}" />
+
+                        </com.google.android.material.textfield.TextInputLayout>
+
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:baselineAligned="false"
+                        android:orientation="horizontal">
+
+                        <com.google.android.material.textfield.TextInputLayout
+                            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_margin="@dimen/default_margin"
+                            android:layout_weight="50">
+
+                            <com.google.android.material.textfield.TextInputEditText
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:hint="@string/emailAddress"
+                                android:text="@={viewModel.customer.emailAddress}" />
+
+                        </com.google.android.material.textfield.TextInputLayout>
+
+                        <com.google.android.material.textfield.TextInputLayout
+                            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_margin="@dimen/default_margin"
+                            android:layout_weight="50">
+
+                            <com.google.android.material.textfield.TextInputEditText
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:hint="@string/phoneNumber"
+                                android:inputType="number"
+                                android:text="@={viewModel.customer.phoneNumber}" />
+
+                        </com.google.android.material.textfield.TextInputLayout>
+
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_margin="@dimen/default_margin"
+                        android:orientation="vertical">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="@string/contact_choice" />
+
+                        <RadioGroup
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:id="@+id/fragment_customer_form_contact_choice_radio_group"
+                            android:orientation="horizontal">
+
+                            <RadioButton
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                android:layout_weight="50"
+                                android:checked="@{viewModel.customer.contactChoice == ContactChoice.EMAIL}"
+                                android:id="@+id/fragment_customer_form_email_radio"
+                                android:text="@string/email" />
+
+                            <RadioButton
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                android:layout_weight="50"
+                                android:checked="@{viewModel.customer.contactChoice == ContactChoice.SMS}"
+                                android:id="@+id/fragment_customer_form_sms_radio"
+                                android:text="@string/sms" />
+
+                            <RadioButton
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                android:layout_weight="50"
+                                android:checked="@{viewModel.customer.contactChoice == ContactChoice.NOTHING}"
+                                android:id="@+id/fragment_customer_form_nothing_radio"
+                                android:text="@string/nothing" />
+
+                        </RadioGroup>
+
+                    </LinearLayout>
+
+                    <com.google.android.material.button.MaterialButton
+                        android:id="@+id/fragment_customer_form_birthday_button"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_margin="@dimen/default_margin"
+                        android:layout_gravity="center_horizontal"
+                        android:text="@string/birthday"
+                        app:icon="@drawable/ic_baseline_cake_24"
+                        app:timestamp="@{viewModel.customer.birthdayTimestamp}" />
+
+                    <com.google.android.material.textfield.TextInputLayout
+                        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_margin="@dimen/default_margin">
+
+                        <com.google.android.material.textfield.TextInputEditText
+                            android:layout_width="match_parent"
+                            android:layout_height="300dp"
+                            android:gravity="top"
+                            android:hint="@string/comment"
+                            android:text="@={viewModel.customer.comment}" />
+
+                    </com.google.android.material.textfield.TextInputLayout>
+
+                </LinearLayout>
+
+            </ScrollView>
 
         </com.google.android.material.card.MaterialCardView>
 
         <com.google.android.material.floatingactionbutton.FloatingActionButton
-            android:id="@+id/fragment_customer_details_modification_fab"
+            android:id="@+id/fragment_customer_form_save_fab"
             style="@style/FabStyle"
+            android:contentDescription="@string/save_fab"
             android:src="@drawable/ic_baseline_save_24"
             app:layout_anchor="@id/fragment_customer_form_scroll_view" />
 
     </androidx.coordinatorlayout.widget.CoordinatorLayout>
+
 </layout>

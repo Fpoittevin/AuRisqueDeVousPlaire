@@ -1,6 +1,7 @@
 package com.poittevin.francois.aurisquedevousplaire.ui.customerDetails
 
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -10,20 +11,18 @@ import androidx.fragment.app.activityViewModels
 import com.poittevin.francois.aurisquedevousplaire.R
 import com.poittevin.francois.aurisquedevousplaire.databinding.FragmentCustomerDetailsBinding
 import com.poittevin.francois.aurisquedevousplaire.injection.Injection
-import com.poittevin.francois.aurisquedevousplaire.models.Customer
-import com.poittevin.francois.aurisquedevousplaire.ui.message.MessageDialogFragment
 import com.poittevin.francois.aurisquedevousplaire.ui.reductionDialog.ReductionDialogFragment
 
 class CustomerDetailsFragment : Fragment(), ReductionDialogFragment.ReductionButtonClickListener {
 
     private lateinit var binding: FragmentCustomerDetailsBinding
     private lateinit var customerModificationFabListener: CustomerModificationFabListener
-    private lateinit var reductionChangeListener: ReductionChangeListener
-    private lateinit var customer: Customer
+    private lateinit var customerDeleteButtonListener: CustomerDeleteButtonListener
+    private var customerId: Int? = null
     private val reductionDialogFragment = ReductionDialogFragment.newInstance(this)
 
     private val customerDetailsViewModel: CustomerDetailsViewModel by activityViewModels {
-        Injection.provideViewModelFactory()
+        Injection.provideViewModelFactory(requireContext())
     }
 
     companion object {
@@ -33,14 +32,16 @@ class CustomerDetailsFragment : Fragment(), ReductionDialogFragment.ReductionBut
         fun newInstance(
             customerId: Int,
             customerModificationFabListener: CustomerModificationFabListener,
-            reductionChangeListener: ReductionChangeListener
+            customerDeleteButtonListener: CustomerDeleteButtonListener
         ) =
             CustomerDetailsFragment().apply {
                 arguments = Bundle().apply {
                     putInt(CUSTOMER_ID_KEY, customerId)
                 }
                 this.customerModificationFabListener = customerModificationFabListener
-                this.reductionChangeListener = reductionChangeListener
+                this.customerDeleteButtonListener = customerDeleteButtonListener
+
+                Log.e("customerDetails", "NEW INSTANCE")
             }
     }
 
@@ -48,14 +49,10 @@ class CustomerDetailsFragment : Fragment(), ReductionDialogFragment.ReductionBut
         super.onCreate(savedInstanceState)
 
         arguments?.let { bundle ->
-            val customerId = bundle.getInt(CUSTOMER_ID_KEY)
-            with(customerDetailsViewModel) {
-                getCustomer(customerId)
-                customer.observe(this@CustomerDetailsFragment, {
-                    this@CustomerDetailsFragment.customer = it
-                })
+            customerId = bundle.getInt(CUSTOMER_ID_KEY)
+            customerId?.let {
+                customerDetailsViewModel.getCustomer(it)
             }
-            customerDetailsViewModel.getCustomer(customerId)
         }
     }
 
@@ -69,12 +66,14 @@ class CustomerDetailsFragment : Fragment(), ReductionDialogFragment.ReductionBut
             lifecycleOwner = this@CustomerDetailsFragment
             viewModel = customerDetailsViewModel
             fragmentCustomerDetailsModificationFab.setOnClickListener {
-                customer.id?.let {
+                customerId?.let {
                     customerModificationFabListener.onCustomerModificationFabClick(it)
                 }
             }
         }
         configureReductionButton()
+        configureDeleteButton()
+
         return binding.root
     }
 
@@ -85,17 +84,23 @@ class CustomerDetailsFragment : Fragment(), ReductionDialogFragment.ReductionBut
         }
     }
 
+    private fun configureDeleteButton() {
+        binding.fragmentCustomerDetailsDeleteButton.setOnClickListener {
+            customerDetailsViewModel.deleteCustomer()
+            customerDeleteButtonListener.onCustomerDeleteButtonClick()
+        }
+    }
+
+    interface CustomerDeleteButtonListener {
+        fun onCustomerDeleteButtonClick()
+    }
+
     interface CustomerModificationFabListener {
         fun onCustomerModificationFabClick(customerId: Int)
     }
 
-    interface ReductionChangeListener {
-        fun onReductionChange()
-    }
-
     override fun onReductionButtonClick() {
         reductionDialogFragment.dismiss()
-        reductionChangeListener.onReductionChange()
         customerDetailsViewModel.useReduction()
     }
 }

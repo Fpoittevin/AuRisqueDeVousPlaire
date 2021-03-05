@@ -2,17 +2,21 @@ package com.poittevin.francois.aurisquedevousplaire.ui
 
 import android.app.Activity
 import android.os.Bundle
+import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
 import android.view.inputmethod.InputMethodManager
+import android.widget.Toast
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
+import androidx.appcompat.view.menu.ActionMenuItemView
 import androidx.appcompat.widget.SearchView
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import com.poittevin.francois.aurisquedevousplaire.R
 import com.poittevin.francois.aurisquedevousplaire.databinding.ActivityMainBinding
+import com.poittevin.francois.aurisquedevousplaire.events.FailureEvent
 import com.poittevin.francois.aurisquedevousplaire.injection.Injection
 import com.poittevin.francois.aurisquedevousplaire.ui.customerDetails.CustomerDetailsFragment
 import com.poittevin.francois.aurisquedevousplaire.ui.customerForm.CustomerFormFragment
@@ -20,19 +24,21 @@ import com.poittevin.francois.aurisquedevousplaire.ui.customersList.CustomersAda
 import com.poittevin.francois.aurisquedevousplaire.ui.customersList.CustomersListFragment
 import com.poittevin.francois.aurisquedevousplaire.ui.customersList.CustomersListViewModel
 import com.poittevin.francois.aurisquedevousplaire.ui.message.MessageDialogFragment
-import com.poittevin.francois.aurisquedevousplaire.ui.message.MessageViewModel
+import com.poittevin.francois.aurisquedevousplaire.utils.IsInternetAvailableLiveData
+import org.greenrobot.eventbus.EventBus
+import org.greenrobot.eventbus.Subscribe
 
 class MainActivity : AppCompatActivity(),
     CustomersAdapter.CustomerItemClickCallback,
     CustomerDetailsFragment.CustomerModificationFabListener,
+    CustomerDetailsFragment.CustomerDeleteButtonListener,
     CustomerFormFragment.CustomerSaveListener,
-    SearchView.OnQueryTextListener,
-    CustomerDetailsFragment.ReductionChangeListener {
+    SearchView.OnQueryTextListener {
 
     private lateinit var binding: ActivityMainBinding
     private val customerListFragment = CustomersListFragment.newInstance()
     private val customersListViewModel: CustomersListViewModel by viewModels {
-        Injection.provideViewModelFactory()
+        Injection.provideViewModelFactory(this)
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -58,6 +64,13 @@ class MainActivity : AppCompatActivity(),
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
         menuInflater.inflate(R.menu.activity_main_toolbar_menu, menu)
+
+        IsInternetAvailableLiveData(this).observe(this) {
+            findViewById<ActionMenuItemView>(R.id.main_activity_toolbar_menu_message_button).apply {
+                isEnabled = it
+            }
+        }
+
         return super.onCreateOptionsMenu(menu)
     }
 
@@ -74,14 +87,8 @@ class MainActivity : AppCompatActivity(),
 
     private fun displayMessageDialogFragment() {
 
-        val messageViewModel: MessageViewModel by viewModels {
-            Injection.provideViewModelFactory()
-        }
-
-        messageViewModel.fromToNumberOfCards.observe(this) {
-            val fragmentTransaction = supportFragmentManager.beginTransaction()
-            MessageDialogFragment.newInstance().show(fragmentTransaction, "message")
-        }
+        val fragmentTransaction = supportFragmentManager.beginTransaction()
+        MessageDialogFragment.newInstance().show(fragmentTransaction, "message")
     }
 
     private fun displayFragment(layoutId: Int, fragment: Fragment) {
@@ -91,7 +98,17 @@ class MainActivity : AppCompatActivity(),
             .commit()
     }
 
+    private fun removeSecondFragment() {
+        supportFragmentManager.findFragmentById(R.id.activity_main_second_frame_layout)?.let {
+            supportFragmentManager
+                .beginTransaction()
+                .remove(it)
+                .commit()
+        }
+    }
+
     override fun onCustomerItemClick(customerId: Int) {
+        hideKeyboard()
         displayFragment(
             R.id.activity_main_second_frame_layout,
             CustomerDetailsFragment.newInstance(customerId, this, this)
@@ -105,12 +122,16 @@ class MainActivity : AppCompatActivity(),
         )
     }
 
+    override fun onCustomerDeleteButtonClick() {
+        removeSecondFragment()
+    }
+
     override fun onCustomerSave(customerId: Int) {
+        Log.e("Main Act onCustomerSave", customerId.toString())
         displayFragment(
             R.id.activity_main_second_frame_layout,
             CustomerDetailsFragment.newInstance(customerId, this, this)
         )
-        customersListViewModel.listChange.value = true
         hideKeyboard()
     }
 
@@ -129,7 +150,23 @@ class MainActivity : AppCompatActivity(),
         return true
     }
 
-    override fun onReductionChange() {
-        customersListViewModel.listChange.value = true
+    override fun onStart() {
+        super.onStart()
+        EventBus.getDefault().register(this)
+    }
+
+    override fun onStop() {
+        super.onStop()
+        EventBus.getDefault().unregister(this)
+    }
+
+    @Subscribe
+    fun onFailureEvent(failureEvent: FailureEvent) {
+        Log.e("ERROR", "onFailure: " + failureEvent.failureMessage)
+        Toast.makeText(
+            applicationContext,
+            failureEvent.failureMessage,
+            Toast.LENGTH_LONG
+        ).show()
     }
 }

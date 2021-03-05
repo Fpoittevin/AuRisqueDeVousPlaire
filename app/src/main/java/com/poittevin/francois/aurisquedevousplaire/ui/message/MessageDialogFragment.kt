@@ -1,7 +1,6 @@
 package com.poittevin.francois.aurisquedevousplaire.ui.message
 
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -16,7 +15,7 @@ class MessageDialogFragment : DialogFragment() {
 
     private lateinit var binding: FragmentDialogMessageBinding
     private val messageViewModel: MessageViewModel by activityViewModels {
-        Injection.provideViewModelFactory()
+        Injection.provideViewModelFactory(requireContext())
     }
 
     companion object {
@@ -35,11 +34,18 @@ class MessageDialogFragment : DialogFragment() {
             lifecycleOwner = viewLifecycleOwner
             viewModel = messageViewModel
             fragmentDialogMessageSendButton.setOnClickListener {
-                messageViewModel.minMax.value?.get(0)?.let { it1 -> Log.e("values", it1.toString()) }
-                messageViewModel.minMax.value?.get(1)?.let { it1 -> Log.e("values", it1.toString()) }
+
+            }
+            fragmentDialogMessageCancelButton.setOnClickListener {
+                requireDialog().cancel()
             }
         }
 
         return binding.root
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        messageViewModel.initValues()
     }
 }

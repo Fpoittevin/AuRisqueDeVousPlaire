@@ -1,17 +1,23 @@
 package com.poittevin.francois.aurisquedevousplaire.ui.customerForm
 
+import android.app.DatePickerDialog
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
+import androidx.lifecycle.MutableLiveData
 import com.poittevin.francois.aurisquedevousplaire.R
 import com.poittevin.francois.aurisquedevousplaire.databinding.FragmentCustomerFormBinding
 import com.poittevin.francois.aurisquedevousplaire.injection.Injection
 import com.poittevin.francois.aurisquedevousplaire.models.Customer
 import com.poittevin.francois.aurisquedevousplaire.ui.customerDetails.CustomerDetailsFragment
+import com.poittevin.francois.aurisquedevousplaire.utils.ContactChoice
+import com.poittevin.francois.aurisquedevousplaire.utils.Utils
+import org.joda.time.LocalDate
 
 class CustomerFormFragment : Fragment() {
 
@@ -19,7 +25,7 @@ class CustomerFormFragment : Fragment() {
     private lateinit var customerSaveListener: CustomerSaveListener
 
     private val customerFormViewModel: CustomerFormViewModel by activityViewModels {
-        Injection.provideViewModelFactory()
+        Injection.provideViewModelFactory(requireContext())
     }
 
     companion object {
@@ -45,7 +51,9 @@ class CustomerFormFragment : Fragment() {
             val customerId = it.getInt(CustomerDetailsFragment.CUSTOMER_ID_KEY)
             customerFormViewModel.getCustomer(customerId)
         } ?: run {
-            customerFormViewModel.customer.value = Customer()
+            customerFormViewModel.customer = MutableLiveData<Customer>().apply {
+                value = Customer()
+            }
         }
     }
 
@@ -59,24 +67,56 @@ class CustomerFormFragment : Fragment() {
             lifecycleOwner = this@CustomerFormFragment
             viewModel = customerFormViewModel
             fragmentCustomerFormProgressBar.visibility = View.GONE
-            fragmentCustomerDetailsModificationFab.setOnClickListener {
+            fragmentCustomerFormSaveFab.setOnClickListener {
 
                 fragmentCustomerFormProgressBar.visibility = View.VISIBLE
                 customerFormViewModel.saveCustomer()
-                customerFormViewModel.result.observe(viewLifecycleOwner) {
-                    customerFormViewModel.result.value?.id?.let { customerId ->
+                customerFormViewModel.customer.observe(viewLifecycleOwner) {
+                    customerFormViewModel.customer.value?.id?.let { customerId ->
 
+                        Log.e("customerFormSave", customerId.toString())
                         customerSaveListener.onCustomerSave(
                             customerId
                         )
                     }
                 }
-
-
             }
         }
+        configureBirthdayButton()
+        configureContactChoiceRadioGroup()
 
         return binding.root
+    }
+
+    private fun configureContactChoiceRadioGroup() {
+        binding.fragmentCustomerFormContactChoiceRadioGroup.setOnCheckedChangeListener { radioGroup, radioId ->
+            customerFormViewModel.customer.value?.let{
+                it.contactChoice =
+                when(radioId) {
+                    R.id.fragment_customer_form_email_radio -> ContactChoice.EMAIL
+                    R.id.fragment_customer_form_sms_radio -> ContactChoice.SMS
+                    else -> ContactChoice.NOTHING
+                }
+            }
+        }
+    }
+
+    private fun configureBirthdayButton() {
+        val datePickerDialog = DatePickerDialog(
+            requireContext(),
+            { _, year: Int, month: Int, dayOfMonth: Int ->
+                val birthdayTimestamp = Utils.getTimestampFromDatePicker(year, month, dayOfMonth)
+                customerFormViewModel.customer.value?.birthdayTimestamp = birthdayTimestamp
+                binding.fragmentCustomerFormBirthdayButton.text =
+                    Utils.convertTimestampToStringDate(birthdayTimestamp)
+            },
+            LocalDate.now().year,
+            (LocalDate.now().monthOfYear - 1),
+            LocalDate.now().dayOfMonth
+        )
+        binding.fragmentCustomerFormBirthdayButton.setOnClickListener {
+            datePickerDialog.show()
+        }
     }
 
     interface CustomerSaveListener {
