@@ -1,8 +1,6 @@
 package com.poittevin.francois.aurisquedevousplaire.api
 
-import android.content.res.Resources
 import androidx.lifecycle.MutableLiveData
-import com.poittevin.francois.aurisquedevousplaire.R
 import com.poittevin.francois.aurisquedevousplaire.events.FailureEvent
 import com.poittevin.francois.aurisquedevousplaire.models.Customer
 import org.greenrobot.eventbus.EventBus
@@ -12,15 +10,15 @@ import retrofit2.Response
 
 class CustomerHelper {
 
-    private val customerService = CustomerService
+    private val apiService = ApiService
         .retrofit
         .create(
-            CustomerService::class.java
+            ApiService::class.java
         )
 
     fun updateCustomer(customer: Customer) {
 
-        customerService.updateCustomer(customer)
+        apiService.updateCustomer(customer)
             .enqueue(object : Callback<Customer> {
                 override fun onResponse(
                     call: Call<Customer>,
@@ -30,7 +28,7 @@ class CustomerHelper {
 
                 override fun onFailure(call: Call<Customer>, t: Throwable) {
                     EventBus.getDefault()
-                        .post(FailureEvent(Resources.getSystem().getString(R.string.server_error)))
+                        .post(FailureEvent("une erreur s'est produite lors de la synchronisation avec le serveur"))
                 }
 
             })
@@ -38,7 +36,7 @@ class CustomerHelper {
 
     fun insertCustomer(customer: Customer) {
 
-        customerService.insertCustomer(customer)
+        apiService.insertCustomer(customer)
             .enqueue(object : Callback<Customer> {
                 override fun onResponse(
                     call: Call<Customer>,
@@ -48,7 +46,7 @@ class CustomerHelper {
 
                 override fun onFailure(call: Call<Customer>, t: Throwable) {
                     EventBus.getDefault()
-                        .post(FailureEvent(Resources.getSystem().getString(R.string.server_error)))
+                        .post(FailureEvent("une erreur s'est produite lors de la synchronisation avec le serveur"))
                 }
 
             })
@@ -56,13 +54,13 @@ class CustomerHelper {
 
     fun deleteCustomer(customer: Customer) {
 
-        customerService.deleteCustomer(customer)
+        apiService.deleteCustomer(customer)
             .enqueue(object : Callback<Void> {
                 override fun onResponse(call: Call<Void>, response: Response<Void>) {}
 
                 override fun onFailure(call: Call<Void>, t: Throwable) {
                     EventBus.getDefault()
-                        .post(FailureEvent(Resources.getSystem().getString(R.string.server_error)))
+                        .post(FailureEvent("une erreur s'est produite lors de la synchronisation avec le serveur"))
                 }
             })
     }
@@ -71,7 +69,7 @@ class CustomerHelper {
 
         val customersListLiveData = MutableLiveData<List<Customer>>()
 
-        customerService
+        apiService
             .getCustomersList()
             .enqueue(object : Callback<List<Customer>> {
                 override fun onResponse(
@@ -85,7 +83,7 @@ class CustomerHelper {
 
                 override fun onFailure(call: Call<List<Customer>>, t: Throwable) {
                     EventBus.getDefault()
-                        .post(FailureEvent(Resources.getSystem().getString(R.string.server_error)))
+                        .post(FailureEvent("une erreur s'est produite lors de la synchronisation avec le serveur"))
                 }
             })
 

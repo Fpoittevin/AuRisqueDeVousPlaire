@@ -2,7 +2,6 @@ package com.poittevin.francois.aurisquedevousplaire.ui.customerForm
 
 import android.app.DatePickerDialog
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -66,18 +65,17 @@ class CustomerFormFragment : Fragment() {
         binding.apply {
             lifecycleOwner = this@CustomerFormFragment
             viewModel = customerFormViewModel
-            fragmentCustomerFormProgressBar.visibility = View.GONE
             fragmentCustomerFormSaveFab.setOnClickListener {
 
-                fragmentCustomerFormProgressBar.visibility = View.VISIBLE
                 customerFormViewModel.saveCustomer()
-                customerFormViewModel.customer.observe(viewLifecycleOwner) {
-                    customerFormViewModel.customer.value?.id?.let { customerId ->
+                customerFormViewModel.saveResult.observe(viewLifecycleOwner) {
+                    if(it) {
+                        customerFormViewModel.customer.value?.id?.let { customerId ->
 
-                        Log.e("customerFormSave", customerId.toString())
-                        customerSaveListener.onCustomerSave(
-                            customerId
-                        )
+                            customerSaveListener.onCustomerSave(
+                                customerId
+                            )
+                        }
                     }
                 }
             }
@@ -89,14 +87,14 @@ class CustomerFormFragment : Fragment() {
     }
 
     private fun configureContactChoiceRadioGroup() {
-        binding.fragmentCustomerFormContactChoiceRadioGroup.setOnCheckedChangeListener { radioGroup, radioId ->
-            customerFormViewModel.customer.value?.let{
+        binding.fragmentCustomerFormContactChoiceRadioGroup.setOnCheckedChangeListener { _, radioId ->
+            customerFormViewModel.customer.value?.let {
                 it.contactChoice =
-                when(radioId) {
-                    R.id.fragment_customer_form_email_radio -> ContactChoice.EMAIL
-                    R.id.fragment_customer_form_sms_radio -> ContactChoice.SMS
-                    else -> ContactChoice.NOTHING
-                }
+                    when (radioId) {
+                        R.id.fragment_customer_form_email_radio -> ContactChoice.EMAIL
+                        R.id.fragment_customer_form_sms_radio -> ContactChoice.SMS
+                        else -> ContactChoice.NOTHING
+                    }
             }
         }
     }

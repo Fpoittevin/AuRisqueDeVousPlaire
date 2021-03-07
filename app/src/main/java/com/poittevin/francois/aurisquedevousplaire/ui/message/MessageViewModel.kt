@@ -5,11 +5,19 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.Transformations
 import androidx.lifecycle.ViewModel
 import com.poittevin.francois.aurisquedevousplaire.models.Customer
+import com.poittevin.francois.aurisquedevousplaire.models.Message
 import com.poittevin.francois.aurisquedevousplaire.repositories.CustomerRepository
+import com.poittevin.francois.aurisquedevousplaire.repositories.MessageRepository
 import com.poittevin.francois.aurisquedevousplaire.utils.ContactChoice
 import com.poittevin.francois.aurisquedevousplaire.utils.MessageUtils
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.launch
 
-class MessageViewModel(customerRepository: CustomerRepository) : ViewModel() {
+class MessageViewModel(
+    private val customerRepository: CustomerRepository,
+    private val messageRepository: MessageRepository
+) : ViewModel() {
 
     companion object {
         private const val SMS_PRICE = 0.06
@@ -21,6 +29,12 @@ class MessageViewModel(customerRepository: CustomerRepository) : ViewModel() {
             minMaxNumberOfCardsLiveData.value = arrayOf(it[0], it[1])
         }
         textMessageLiveData.value = ""
+    }
+
+    fun sendMessage(message: Message) {
+        GlobalScope.launch(Dispatchers.IO) {
+            messageRepository.sendMessage(message)
+        }
     }
 
     val textMessageLiveData = MutableLiveData<String>()

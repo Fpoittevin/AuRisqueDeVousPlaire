@@ -10,6 +10,7 @@ import androidx.fragment.app.activityViewModels
 import com.poittevin.francois.aurisquedevousplaire.R
 import com.poittevin.francois.aurisquedevousplaire.databinding.FragmentDialogMessageBinding
 import com.poittevin.francois.aurisquedevousplaire.injection.Injection
+import com.poittevin.francois.aurisquedevousplaire.models.Message
 
 class MessageDialogFragment : DialogFragment() {
 
@@ -34,7 +35,8 @@ class MessageDialogFragment : DialogFragment() {
             lifecycleOwner = viewLifecycleOwner
             viewModel = messageViewModel
             fragmentDialogMessageSendButton.setOnClickListener {
-
+                sendMessage()
+                requireDialog().cancel()
             }
             fragmentDialogMessageCancelButton.setOnClickListener {
                 requireDialog().cancel()
@@ -47,5 +49,21 @@ class MessageDialogFragment : DialogFragment() {
     override fun onDestroyView() {
         super.onDestroyView()
         messageViewModel.initValues()
+    }
+
+    private fun sendMessage() {
+        val message = Message().apply {
+            withReduction = messageViewModel.withReductionLiveData.value
+            messageViewModel.minMaxNumberOfCardsLiveData.value?.get(0)?.let{
+                minNumberOfCards = it
+            }
+            messageViewModel.minMaxNumberOfCardsLiveData.value?.get(1)?.let{
+                maxNumberOfCards = it
+            }
+        }
+        messageViewModel.textMessageLiveData.value?.let{
+            message.content = it
+        }
+        messageViewModel.sendMessage(message)
     }
 }

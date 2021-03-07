@@ -35,10 +35,9 @@
     <string name="number_of_cards_between">nombre de cartes compris entre</string>
     <string name="people_will_receive_this_message">personnes recevront ce message</string>
     <string name="sms_per_person">sms par personne</string>
-    <string name="currency_with_info">€ HT (prix approximatif)</string>
+    <string name="currency_with_info"> HT (prix approximatif)</string>
     <string name="char_number">caractères (149 caractères / sms)</string>
     <string name="cancel">annuler</string>
     <string name="price_after_reduction">prix après réduction</string>
 
-    <string name="server_error">"une erreur s'est produite lors de la synchronisation avec le serveur"</string>
 </resources>
